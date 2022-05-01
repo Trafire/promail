@@ -12,6 +12,9 @@ keywords = ["promail"]
 [tool.poetry.dependencies]
 python = "^3.8"
 pytest = "^7.1.2"
+pywin32 = {version = "^303", platform = "windows"}
+pypiwin32 = {version = "^223", platform = "win32"}
+mjml = "^0.7.0"
 
 [tool.poetry.dev-dependencies]
 
