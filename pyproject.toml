@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "promail"
+version = "0.1.0"
+authors = ["Antoine Wood <antoinewood@gmail.com>"]
+description = "The Python Email AutomatioN Framework"
+license = "GNU"
+readme = "README.md"
+homepage = "https://github.com/trafire/promail"
+repository = "https://github.com/trafire/promail"
+keywords = ["promail"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pytest = "^7.1.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
