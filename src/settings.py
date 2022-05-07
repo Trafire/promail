@@ -4,15 +4,11 @@ Email App Settings
 
 import configparser
 
-
 config = configparser.RawConfigParser()
 config.read(r"config.toml")
 
-
-
 MAIL_ITEM = 0
 
-DISPLAY = config["INTERFACE"].getboolean('display')
+DISPLAY = config["INTERFACE"].getboolean("display")
 
-
-TEST_EMAIL = config['TEST_DATA']['email']
+TEST_EMAIL = config["TEST_DATA"]["email"]

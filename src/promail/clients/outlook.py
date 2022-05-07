@@ -1,12 +1,12 @@
 from src.promail.clients.email_manager import InBoundManager, OutBoundManager
 import sys
-import os
 
 from settings import MAIL_ITEM, DISPLAY, TEST_EMAIL
 from mjml import mjml2html
 
 if sys.platform == "win32":
     import win32com.client as win32
+
 
 class OutLookClient(OutBoundManager):
     if sys.platform == "win32":
@@ -18,7 +18,9 @@ class OutLookClient(OutBoundManager):
         if sys.platform != "win32":
             raise OSError("Outlook Client is only available on windows computers")
 
-    def outbound(self, recipients: str, cc: str, bcc: str, subject: str, htmltext: str, plaintext):
+    def outbound(
+            self, recipients: str, cc: str, bcc: str, subject: str, htmltext: str, plaintext
+    ):
         OutLookClient.mail.To = recipients
         OutLookClient.mail.Bcc = bcc
         OutLookClient.mail.Cc = cc
@@ -33,11 +35,12 @@ class OutLookClient(OutBoundManager):
             OutLookClient.mail.Send()
 
 
-if __name__ == '__main__':
-    with open(r'C:\Users\Antoine\PycharmProjects\poutlook\src\templates\built_in\mjml\happy_new_year.html',
-              'r') as file:
+if __name__ == "__main__":
+    with open(
+            r"C:\Users\Antoine\PycharmProjects\poutlook\src\templates\built_in\mjml\happy_new_year.html",
+            "r",
+    ) as file:
         emailer = OutLookClient()
 
-        text = mjml2html.mjml_to_html(file)['html']
-        emailer.outbound(TEST_EMAIL, '', '', "subject",
-                         text, '')
+        text = mjml2html.mjml_to_html(file)["html"]
+        emailer.outbound(TEST_EMAIL, "", "", "subject", text, "")
