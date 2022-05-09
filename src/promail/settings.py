@@ -1,6 +1,4 @@
-"""
-Email App Settings
-"""
+"""Settings File for emails."""
 
 import configparser
 
