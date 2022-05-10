@@ -12,11 +12,11 @@ keywords = ["promail"]
 [tool.poetry.dependencies]
 python = "^3.8"
 pytest = "^7.1.2"
-pypiwin32 = {version = "^223", platform = "win32"}
+pypiwin32 = {version = "^223", platform = "windows"}
 mjml = "^0.7.0"
 flake8 = "^4.0.1"
 nox = "^2022.1.7"
-pywin32 = "^304"
+pywin32 = {version = "^304", platform = "windows"}
 
 [tool.poetry.dev-dependencies]
 coverage = {extras = ["toml"], version = "^6.3.2"}
@@ -29,12 +29,12 @@ black = "^22.3.0"
 flake8 = "^4.0.1"
 flake8-bandit = "^3.0.0"
 flake8-black = "^0.3.2"
-flake8-bugbear = "^22.4.25"
 flake8-import-order = "^0.18.1"
 safety = "^1.10.3"
 mypy = "^0.950"
 pytype = {version = "^2022.5.5", python = "3.7"}
 Sphinx = "^4.5.0"
+sphinx-autodoc-typehints = "^1.18.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

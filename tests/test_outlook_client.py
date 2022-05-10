@@ -1,8 +1,8 @@
 """Tests for Outlook mail Client."""
 import time
 
-from src.promail.clients.outlook import OutLookClient
-from src.promail.settings import TEST_EMAIL
+from promail.clients.outlook import OutLookClient
+from promail.settings import TEST_EMAIL
 
 
 def send_email() -> None:

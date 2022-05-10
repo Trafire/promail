@@ -6,7 +6,7 @@ from typing import BinaryIO, TextIO
 import nox
 from nox import Session
 
-locations = "src", "tests", "./noxfile.py"
+locations = "promailer", "tests", "./noxfile.py", "docs/conf.py"
 nox.options.sessions = "lint", "safety", "mypy", "tests"
 
 
@@ -43,12 +43,12 @@ def tests(session: Session) -> None:
     args = session.posargs or ["--cov", "-m", "not e2e"]
     session.run("poetry", "install", "--no-dev", external=True)
     install_with_constraints(
-        session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock"
+        session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock", "pywin32"
     )
     session.run("pytest", *args)
 
 
-# @nox.session(python=["3.8", "3.7"])
+# @nox.session(python=["3.8", "3.9])
 # def xdoctest(session: Session) -> None:
 #     """Run examples with xdoctest."""
 #     args = session.posargs or ["all"]
@@ -98,7 +98,7 @@ def safety(session: Session) -> None:
         )
 
 
-@nox.session(python=["3.8", "3.7"])
+@nox.session(python=["3.8", "3.9"])
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
     args = session.posargs or locations
@@ -106,13 +106,20 @@ def mypy(session: Session) -> None:
     session.run("mypy", *args)
 
 
-# @nox.session(python="3.7")
+# @nox.session(python="3.8")
 # def pytype(session: Session) -> None:
 #     """Run the static type checker."""
 #     args = session.posargs or ["--disable=import-error", *locations]
 #     install_with_constraints(session, "pytype")
 #     session.run("pytype", *args)
 
+
+@nox.session(python="3.8")
+def docs(session: Session) -> None:
+    """Build the documentation."""
+    session.run("poetry", "install", "--no-dev", external=True)
+    install_with_constraints(session, "sphinx", "sphinx-autodoc-typehints")
+    session.run("sphinx-build", "docs", "docs/_build")
 
 class CustomNamedTemporaryFile:
     """Alternative Temp file to allow compatibility with windows.
@@ -127,12 +134,12 @@ class CustomNamedTemporaryFile:
 
     """
 
-    def __init__(self: object, mode: str = "wb", delete: bool = True) -> None:
+    def __init__(self, mode: str = "wb", delete: bool = True) -> None:
         """Initiates CustomNamedTemporaryFile."""
         self._mode = mode
         self._delete = delete
 
-    def __enter__(self: object) -> TextIO or BinaryIO:
+    def __enter__(self) -> TextIO or BinaryIO:
         """Creates and opens temp file."""
         # Generate a random temporary file name
         file_name = os.path.join(tempfile.gettempdir(), os.urandom(24).hex())
@@ -142,6 +149,6 @@ class CustomNamedTemporaryFile:
         self._tempFile = open(file_name, self._mode)
         return self._tempFile
 
-    def __exit__(self: object, *args: tuple, **kwargs: dict) -> None:
+    def __exit__(self, *args: tuple, **kwargs: dict) -> None:
         """Closes temp file."""
         self._tempFile.close()

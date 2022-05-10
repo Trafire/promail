@@ -1,8 +1,8 @@
 """Mail Client for outlook."""
 import sys
 
-from src.promail.clients.email_manager import OutBoundManager
-from src.promail.settings import DISPLAY, MAIL_ITEM
+from promail.clients.email_manager import OutBoundManager
+from promail.settings import DISPLAY, MAIL_ITEM
 
 if sys.platform == "win32":
     import win32com.client as win32

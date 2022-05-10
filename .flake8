@@ -1,5 +1,5 @@
 [flake8]
-application-import-names = src,tests
+application-import-names = promail,tests
 ignore = E203,W503
 max-line-length = 88
 select = ANN,B,B9,BLK,C,D,DAR,E,F,I,S,W
