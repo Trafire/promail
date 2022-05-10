@@ -1,5 +1,6 @@
 [![Tests](https://github.com/trafire/promail/workflows/Tests/badge.svg)](https://github.com/trafire/promail/actions?workflow=Tests)
 [![Codecov](https://codecov.io/gh/trafire/promail/branch/master/graph/badge.svg)](https://codecov.io/gh/trafire/promail)
+[![PyPI](https://img.shields.io/pypi/v/hypermodern-python.svg)](https://pypi.org/project/hypermodern-python/)
 # promail
 
 Email Templates:
