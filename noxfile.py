@@ -1,7 +1,7 @@
 """Nox sessions."""
 import os
 import tempfile
-from typing import BinaryIO, TextIO
+from typing import Any, IO
 
 import nox
 from nox import Session
@@ -25,7 +25,7 @@ class CustomNamedTemporaryFile:
         self._mode = mode
         self._delete = delete
 
-    def __enter__(self) -> TextIO or BinaryIO:
+    def __enter__(self) -> IO[Any]:
         """Creates and opens temp file."""
         # Generate a random temporary file name
         file_name = os.path.join(tempfile.gettempdir(), os.urandom(24).hex())
@@ -132,11 +132,11 @@ def safety(session: Session) -> None:
         )
 
 
-@nox.session(python=["3.8", "3.9"])
+@nox.session(python=["3.9"])
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
     args = session.posargs or locations
-    install_with_constraints(session, "mypy")
+    install_with_constraints(session, "mypy", "--verbose")
     session.run("mypy", *args)
 
 
