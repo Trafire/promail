@@ -40,7 +40,7 @@ class CustomNamedTemporaryFile:
         self._tempFile.close()
 
 
-locations = "promail", "tests", "./noxfile.py", "docs/conf.py"
+locations = "src", "tests", "noxfile.py", "docs/conf.py"
 nox.options.sessions = "lint", "safety", "mypy", "tests"
 
 
