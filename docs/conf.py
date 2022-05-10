@@ -11,4 +11,4 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx_autodoc_typehints",
 ]
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath(".."))

@@ -6,7 +6,41 @@ from typing import BinaryIO, TextIO
 import nox
 from nox import Session
 
-locations = "promailer", "tests", "./noxfile.py", "docs/conf.py"
+
+class CustomNamedTemporaryFile:
+    """Alternative Temp file to allow compatibility with windows.
+
+    This custom implementation is needed because of the following limitation of
+    tempfile.NamedTemporaryFile:
+
+    > Whether the name can be used to open the file a second time,
+    while the named temporary file is still open,
+    > varies across platforms (it can be so used on Unix;
+     it cannot on Windows NT or later).
+
+    """
+
+    def __init__(self, mode: str = "wb", delete: bool = True) -> None:
+        """Initiates CustomNamedTemporaryFile."""
+        self._mode = mode
+        self._delete = delete
+
+    def __enter__(self) -> TextIO or BinaryIO:
+        """Creates and opens temp file."""
+        # Generate a random temporary file name
+        file_name = os.path.join(tempfile.gettempdir(), os.urandom(24).hex())
+        # Ensure the file is created
+        open(file_name, "x").close()
+        # Open the file in the given mode
+        self._tempFile = open(file_name, self._mode)
+        return self._tempFile
+
+    def __exit__(self, *args: tuple, **kwargs: dict) -> None:
+        """Closes temp file."""
+        self._tempFile.close()
+
+
+locations = "promail", "tests", "./noxfile.py", "docs/conf.py"
 nox.options.sessions = "lint", "safety", "mypy", "tests"
 
 
@@ -43,7 +77,7 @@ def tests(session: Session) -> None:
     args = session.posargs or ["--cov", "-m", "not e2e"]
     session.run("poetry", "install", "--no-dev", external=True)
     install_with_constraints(
-        session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock", "pywin32"
+        session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock"
     )
     session.run("pytest", *args)
 
@@ -121,34 +155,10 @@ def docs(session: Session) -> None:
     install_with_constraints(session, "sphinx", "sphinx-autodoc-typehints")
     session.run("sphinx-build", "docs", "docs/_build")
 
-class CustomNamedTemporaryFile:
-    """Alternative Temp file to allow compatibility with windows.
 
-    This custom implementation is needed because of the following limitation of
-    tempfile.NamedTemporaryFile:
-
-    > Whether the name can be used to open the file a second time,
-    while the named temporary file is still open,
-    > varies across platforms (it can be so used on Unix;
-     it cannot on Windows NT or later).
-
-    """
-
-    def __init__(self, mode: str = "wb", delete: bool = True) -> None:
-        """Initiates CustomNamedTemporaryFile."""
-        self._mode = mode
-        self._delete = delete
-
-    def __enter__(self) -> TextIO or BinaryIO:
-        """Creates and opens temp file."""
-        # Generate a random temporary file name
-        file_name = os.path.join(tempfile.gettempdir(), os.urandom(24).hex())
-        # Ensure the file is created
-        open(file_name, "x").close()
-        # Open the file in the given mode
-        self._tempFile = open(file_name, self._mode)
-        return self._tempFile
-
-    def __exit__(self, *args: tuple, **kwargs: dict) -> None:
-        """Closes temp file."""
-        self._tempFile.close()
+@nox.session(python="3.8")
+def coverage(session: Session) -> None:
+    """Upload coverage data."""
+    install_with_constraints(session, "coverage[toml]", "codecov")
+    session.run("coverage", "xml", "--fail-under=0")
+    session.run("codecov", *session.posargs)

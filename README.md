@@ -1,3 +1,5 @@
+[![Tests](https://github.com/trafire/promail/workflows/Tests/badge.svg)](https://github.com/trafire/promail/actions?workflow=Tests)
+
 # promail
 
 Email Templates:
