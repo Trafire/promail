@@ -71,7 +71,7 @@ def black(session: Session) -> None:
     session.run("black", *args)
 
 
-@nox.session(python=["3.9"])
+@nox.session(python=["3.8", "3.9", "3.10"])
 def tests(session: Session) -> None:
     """Run the test suite."""
     args = session.posargs or ["--cov", "-m", "not e2e"]
@@ -132,7 +132,7 @@ def safety(session: Session) -> None:
         )
 
 
-@nox.session(python=["3.9"])
+@nox.session(python=["3.10"])
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
     args = session.posargs or locations
