@@ -2,7 +2,7 @@
 name = "promail"
 version = "0.1.1"
 authors = ["Antoine Wood <antoinewood@gmail.com>"]
-description = "The Python Email Automation Framework"
+description = "The Python Email AutomatioN Framework"
 license = "GNU"
 readme = "README.md"
 homepage = "https://github.com/trafire/promail"
@@ -11,12 +11,8 @@ keywords = ["promail"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-pytest = "^7.1.2"
 mjml = "^0.7.0"
-nox = "^2022.1.7"
 importlib-metadata = {version = "^4.11.3", python = "<3.8"}
-
-
 
 [tool.poetry.dev-dependencies]
 flake8-annotations = "^2.9.0"
