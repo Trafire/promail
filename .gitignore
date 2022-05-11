@@ -1,1 +1,8 @@
 /config.toml
+/docs/_build/
+/poetry.lock
+/.coverage
+/.pytest_cache/
+/.mypy_cache/
+/.nox/
+/dist/
