@@ -10,4 +10,4 @@ try:
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 
-__all__ = ["clients"]
+__all__ = ["clients", "core"]

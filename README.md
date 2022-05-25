@@ -1,12 +1,25 @@
 [![Tests](https://github.com/trafire/promail/workflows/Tests/badge.svg)](https://github.com/trafire/promail/actions?workflow=Tests)
 [![Codecov](https://codecov.io/gh/trafire/promail/branch/master/graph/badge.svg)](https://codecov.io/gh/trafire/promail)
 [![PyPI](https://img.shields.io/pypi/v/promail.svg)](https://pypi.org/project/promail/)
-# promail
+# Promail
 
-Email Templates:
+Promail along with its sister library Promail-Templates aims 
+to close the email gap between what you as an individual can make your
+email do with little effort and what enterprise users do
 
- When you install we create an email templates file with installed templates commented out. You can enable any templates by uncommenting these.
+- Automated Professional Rich content HTML emails
+- Allow you to write your own pluggins that do arbitrary things depending on the content of the email.
 
-Email Templates:
-    Composed of fragments
-    Should include a json that explains format of the data and a description and a sample. We should also see if we can include a jpeg screen print of the sample data (maybe using playwright to render html and take a screen shot https://stackoverflow.com/questions/60598837/html-to-image-using-python)
+## Installation
+```
+pip install promail-template
+```
+## Simple Usage
+
+```python
+
+client = GmailClient("your-gmail@gmail.com")
+# The first time you do this it will open a web browser allowing you to sign into your google account directly
+client.send_email()
+
+```

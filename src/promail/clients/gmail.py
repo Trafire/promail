@@ -1,49 +1,123 @@
 """Gmail Mail Client."""
-import smtplib
+import base64
+import os.path
+from typing import List, Optional
 
-from promail.clients.email_manager import OutBoundManager
+from google_auth_oauthlib.flow import InstalledAppFlow  # type: ignore
+
+from googleapiclient.discovery import build  # type: ignore
+from googleapiclient.errors import HttpError  # type: ignore
+from google.auth.transport.requests import Request  # type: ignore
+from google.oauth2.credentials import Credentials  # type: ignore
 
 
-class GmailClient(OutBoundManager):
+from promail.clients.email_manager import InBoundManager, OutBoundManager
+from promail.core.embedded_attachments import EmbeddedAttachments
+
+
+class GmailClient(OutBoundManager, InBoundManager):
     """Gmail Client."""
 
-    def __init__(self, account: str, password: str) -> None:
+    SCOPES = [
+        "https://www.googleapis.com/auth/gmail.readonly",
+        "https://www.googleapis.com/auth/gmail.send",
+    ]
+
+    def __init__(
+        self, account: str, token_path: str = "", credentials: str = ""
+    ) -> None:  # ignore
         """Initiates Gmail Client.
 
         Args:
             account: Gmail Email Address
-            password: Password for gmail account create app specific password
-                https://security.google.com/settings/security/apppasswords
+            token_path: Path of Gmail token. Leave blank for default
+            credentials: Location of Gmail API Credentials.
+                Leave Blank to use promail's credentials.
+                Promail is shipped with credentials, however there
+                is a daily maximum of 1 Billion Actions
+                shared amongst all users of the software. To keep
+                this pool available we recommend that for heavy or
+                production uses you create your own key so we don't
+                exhaust current resources.
+                The Gmail API is free so there are no cost implications.
         """
-        self._account = account
-        self._password = password
+        super(GmailClient, self).__init__(account)
+        sanitized_account: str = "".join(x for x in account if x.isalnum())
+        self._token_path: str = token_path or os.path.join(
+            os.getcwd(),
+            ".credentials",
+            "gmail",
+            f"{sanitized_account}.json",
+        )
+        self.gmail_credentials: str = credentials or (
+            os.path.dirname(os.path.realpath(__file__))
+            + r"\\..\\..\\..\\.credentials/gmail_credentials.json"
+        )
+        self.service = self.login()
+
+    def login(self):
+        """Logs into Gmail using OAuth and saves a token for later use."""
+        creds = None
+        # The file token.json stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists(self._token_path):
+            creds = Credentials.from_authorized_user_file(
+                self._token_path, GmailClient.SCOPES
+            )
+        # If there are no (valid) credentials available, let the user log in.
+
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    self.gmail_credentials, GmailClient.SCOPES
+                )
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+
+            # folder doesn't exist create it
+            if not os.path.exists(os.path.dirname(self._token_path)):
+                os.makedirs(os.path.dirname(self._token_path))
+
+            with open(self._token_path, "w") as token:
+                token.write(creds.to_json())
+        return build("gmail", "v1", credentials=creds)
 
     def send_email(
         self,
-        recipients: str,
-        cc: str,
-        bcc: str,
-        subject: str,
-        htmltext: str,
-        plaintext: str,
+        recipients: str = "",
+        cc: str = "",
+        bcc: str = "",
+        subject: str = "",
+        htmltext: str = "",
+        plaintext: str = "",
+        embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
+        attachements: Optional[list] = None,
     ) -> None:
-        """Send Email email using Outlook client in windows.
+        """Send email."""
+        msg = self.create_message(
+            recipients,
+            cc,
+            bcc,
+            subject,
+            htmltext,
+            plaintext,
+            embedded_attachments,
+            attachements,
+        )
 
-        Args:
-            recipients: semicolon seperated string of recipients will show in to section
-                "Example Foo <bar@example.com>;Example2 Bar <foo@example.com"
-            cc: semicolon seperated string of recipients will  be cc'd on email
-                "Example Foo <bar@example.com>;Example2 Bar <foo@example.com"
-            bcc: semicolon seperated string of recipients will be bcc'd on email
-                "Example Foo <bar@example.com>;Example2 Bar <foo@example.com"
-            subject: Subject of the email
-            htmltext: An HTML string of text
-            plaintext: A plain text alternative text
-        """
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.ehlo()
-        server.starttls()
-        server.login(self._account, self._password)
-        server.sendmail(self._account, recipients, htmltext)
-        server.close()
-        print("successfully sent the mail")
+        raw_data = base64.urlsafe_b64encode(msg.as_bytes())
+        raw = raw_data.decode()
+        try:
+            message = (
+                self.service.users()
+                .messages()
+                .send(userId=self._account, body={"raw": raw})
+                .execute()
+            )
+            print("Message Id: %s" % message["id"])
+            return message
+        except HttpError as error:
+            print("An error occurred: %s" % error)

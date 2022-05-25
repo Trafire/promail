@@ -6,6 +6,10 @@ from typing import Any, IO
 import nox
 from nox import Session
 
+locations = "src", "tests", "noxfile.py", "docs/conf.py"
+nox.options.sessions = "lint", "safety", "mypy", "tests"
+package = "promail"
+
 
 class CustomNamedTemporaryFile:
     """Alternative Temp file to allow compatibility with windows.
@@ -29,6 +33,7 @@ class CustomNamedTemporaryFile:
         """Creates and opens temp file."""
         # Generate a random temporary file name
         file_name = os.path.join(tempfile.gettempdir(), os.urandom(24).hex())
+        self.filename = file_name
         # Ensure the file is created
         open(file_name, "x").close()
         # Open the file in the given mode
@@ -38,13 +43,6 @@ class CustomNamedTemporaryFile:
     def __exit__(self, *args: tuple, **kwargs: dict) -> None:
         """Closes temp file."""
         self._tempFile.close()
-
-
-locations = "src", "tests", "noxfile.py", "docs/conf.py"
-nox.options.sessions = "lint", "safety", "mypy", "tests"
-
-
-# noxfile.py
 
 
 def install_with_constraints(session: Session, *args: str, **kwargs: str) -> None:
@@ -75,7 +73,7 @@ def black(session: Session) -> None:
 def tests(session: Session) -> None:
     """Run the test suite."""
     args = session.posargs or ["--cov", "-m", "not e2e"]
-    session.run("poetry", "install", "--no-dev", external=True)
+    session.run("poetry", "install", external=True)
     install_with_constraints(
         session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock"
     )
