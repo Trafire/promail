@@ -44,5 +44,5 @@ def test_send_email() -> None:
 @pytest.mark.e2e
 def test_login() -> None:
     """Test Send email function."""
-    client = GmailClient("promail.tests@gmail.com")
+    client = GmailClient(GMAIL_TEST_EMAIL)
     assert client.service is not None
