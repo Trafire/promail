@@ -16,8 +16,8 @@ jobs:
         architecture: x64
     - run: pip install nox==2022.1.7
     - run: pip install poetry==1.1.13
-    - env:
+    - run: nox
+      env:
         HOTMAIL_TEST_EMAIL: ${{ secrets.HOTMAIL_TEST_EMAIL }}
         HOTMAIL_TEST_PASSWORD: ${{ secrets.HOTMAIL_TEST_PASSWORD }}
         GMAIL_TEST_EMAIL: ${{ secrets.GMAIL_TEST_EMAIL }}
-    - run: nox

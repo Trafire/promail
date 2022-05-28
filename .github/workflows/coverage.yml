@@ -14,3 +14,6 @@ jobs:
     - run: nox --sessions tests-3.8.13 coverage
       env:
         CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
+        HOTMAIL_TEST_EMAIL: ${{ secrets.HOTMAIL_TEST_EMAIL }}
+        HOTMAIL_TEST_PASSWORD: ${{ secrets.HOTMAIL_TEST_PASSWORD }}
+        GMAIL_TEST_EMAIL: ${{ secrets.GMAIL_TEST_EMAIL }}
