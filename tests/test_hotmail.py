@@ -6,6 +6,10 @@ from dotenv import load_dotenv  # type: ignore
 from promail.clients.microsoft import HotmailClient
 from promail.core.embedded_attachments import EmbeddedAttachments
 
+load_dotenv(".env")
+HOTMAIL_TEST_EMAIL = os.environ.get("HOTMAIL_TEST_EMAIL", "")
+HOTMAIL_TEST_PASSWORD = os.environ.get("HOTMAIL_TEST_PASSWORD", "")
+
 
 def test_send_email() -> None:
     """Test Send email function."""
@@ -18,7 +22,7 @@ def test_send_email() -> None:
     image_1 = EmbeddedAttachments(r"tests/assets/wolves-1341881.jpg")
     embedded = [image_1]
     client.send_email(
-        "protesting2022@outlook.com",
+        HOTMAIL_TEST_EMAIL,
         "",
         "",
         "Test email",
@@ -33,8 +37,3 @@ def test_send_email() -> None:
             r"tests/assets/1.pdf",
         ],
     )
-
-
-load_dotenv(".env")
-HOTMAIL_TEST_EMAIL = os.environ.get("HOTMAIL_TEST_EMAIL", "")
-HOTMAIL_TEST_PASSWORD = os.environ.get("HOTMAIL_TEST_PASSWORD", "")

@@ -24,7 +24,7 @@ def test_send_email() -> None:
     image_1 = EmbeddedAttachments(r"tests/assets/wolves-1341881.jpg")
     embedded = [image_1]
     client.send_email(
-        "promail.tests@gmail.com",
+        GMAIL_TEST_EMAIL,
         "",
         "",
         "Test email",
