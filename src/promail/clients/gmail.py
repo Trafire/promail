@@ -63,7 +63,7 @@ class GmailClient(OutBoundManager, InBoundManager):
         print(self._token_path)
         self.gmail_credentials: str = credentials or (
             os.path.dirname(os.path.realpath(__file__))
-            + r"\\..\\..\\..\\.credentials/gmail_credentials.json"
+            + r"\\..\\..\\.credentials/gmail_credentials.json"
         )
         self.login()
         self._clear_token = clear_token
