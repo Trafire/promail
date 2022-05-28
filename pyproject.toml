@@ -2,23 +2,30 @@
 name = "promail"
 version = "0.2.0"
 authors = ["Antoine Wood <antoinewood@gmail.com>"]
-description = "The Python Email AutomatioN Framework"
+description = "The Python Email Automation Framework"
 license = "GNU"
 readme = "README.md"
 homepage = "https://github.com/trafire/promail"
 repository = "https://github.com/trafire/promail"
-keywords = ["promail"]
+keywords = ["promail", "email", "automation"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-mjml = "^0.7.0"
 importlib-metadata = {version = "^4.11.3", python = "<3.8"}
+google-api-python-client = "^2.47.0"
+google-auth-httplib2 = "^0.1.0"
+google-auth-oauthlib = "^0.5.1"
+nox = "^2022.1.7"
+google-auth = "^2.6.6"
+tabulate = "^0.8.9"
+requests = "^2.27.1"
+google-api-core = "^2.8.0"
+python-dotenv = "^0.1.0"
 
 [tool.poetry.dev-dependencies]
 flake8-annotations = "^2.9.0"
 coverage = {extras = ["toml"], version = "^6.3.2"}
 pytest-cov = "^3.0.0"
-nox = "^2022.1.7"
 flake8-docstrings = "^1.6.0"
 darglint = "^1.8.1"
 xdoctest = "^1.0.0"
@@ -32,8 +39,14 @@ mypy = "^0.950"
 pytype = {version = "^2022.5.5", python = "3.7"}
 Sphinx = "^4.5.0"
 sphinx-autodoc-typehints = "^1.18.1"
-codecov = "^2.1.12"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.coverage.paths]
+source = ["src", "*/site-packages"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

@@ -1,7 +1,5 @@
 Promailer: The Python Email Automation Framework
-
-The Hypermodern Python Project
-==============================
+================================================
 
 .. toctree::
    :hidden:
