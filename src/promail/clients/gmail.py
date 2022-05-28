@@ -58,10 +58,8 @@ class GmailClient(OutBoundManager, InBoundManager):
             "gmail",
             f"{sanitized_account}.json",
         )
-        print(self._token_path)
         self.gmail_credentials: str = credentials or os.path.join(
             os.path.dirname(os.path.realpath(__file__)),
-            "..",
             "..",
             ".credentials",
             "gmail_credentials.json",
