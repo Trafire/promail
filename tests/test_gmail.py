@@ -5,20 +5,19 @@ therefore not suitable for CI/CD
 """
 import os
 
+from dotenv import load_dotenv  # type: ignore
+
 import pytest
 
 from promail.clients.gmail import GmailClient
 from promail.core.embedded_attachments import EmbeddedAttachments
 
 
-def load_dotenv(param):
-    pass
+load_dotenv(".env")
+GMAIL_TEST_EMAIL = os.environ.get("GMAIL_TEST_EMAIL", "")
 
 
-load_dotenv('.env')
-GMAIL_TEST_EMAIL = os.environ.get("GMAIL_TEST_EMAIL",'')
-
-# @pytest.mark.e2e
+@pytest.mark.e2e
 def test_send_email() -> None:
     """Test Send email function."""
     client = GmailClient(GMAIL_TEST_EMAIL)
@@ -47,7 +46,3 @@ def test_login() -> None:
     """Test Send email function."""
     client = GmailClient("promail.tests@gmail.com")
     assert client.service is not None
-
-
-
-

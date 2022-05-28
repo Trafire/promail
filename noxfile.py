@@ -11,23 +11,6 @@ nox.options.sessions = "lint", "safety", "mypy", "tests"
 package = "promail"
 
 
-def load_environment_file():
-    if os.path.exists('.env'):
-        with open('.env') as file_obj:
-            lines = file_obj.read().splitlines()  # Removes \n from lines
-
-        dotenv_vars = {}
-        for line in lines:
-            line = line.strip()
-            if not line or line.startswith("#") or "=" not in line:
-                continue
-            key, value = line.split("=", maxsplit=1)
-            dotenv_vars.setdefault(key, value)
-            os.environ.update(dotenv_vars)
-
-
-
-
 class CustomNamedTemporaryFile:
     """Alternative Temp file to allow compatibility with windows.
 
@@ -96,11 +79,12 @@ def tests(session: Session) -> None:
     install_with_constraints(
         session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock"
     )
-    load_environment_file()
     session.run("pytest", *args)
+
 
 @nox.session(python=["3.8.13"])
 def poetry_update(session: Session) -> None:
+    """Update Lock File."""
     session.run("poetry", "update", external=True)
 
 
@@ -119,6 +103,7 @@ def lint(session: Session) -> None:
     args = session.posargs or locations
     install_with_constraints(
         session,
+        "black",
         "flake8",
         "flake8-annotations",
         "flake8-bandit",
@@ -128,6 +113,7 @@ def lint(session: Session) -> None:
         "flake8-import-order",
         "darglint",
     )
+    session.run("black", *locations)
     session.run("flake8", *args)
 
 

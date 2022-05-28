@@ -1,11 +1,10 @@
 """Tests for SMTP Client."""
 import os
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv  # type: ignore
 
 from promail.clients.microsoft import HotmailClient
 from promail.core.embedded_attachments import EmbeddedAttachments
-
 
 
 def test_send_email() -> None:
@@ -36,6 +35,6 @@ def test_send_email() -> None:
     )
 
 
-load_dotenv('.env')
-HOTMAIL_TEST_EMAIL = os.environ.get("HOTMAIL_TEST_EMAIL", '')
-HOTMAIL_TEST_PASSWORD = os.environ.get("HOTMAIL_TEST_PASSWORD", '')
+load_dotenv(".env")
+HOTMAIL_TEST_EMAIL = os.environ.get("HOTMAIL_TEST_EMAIL", "")
+HOTMAIL_TEST_PASSWORD = os.environ.get("HOTMAIL_TEST_PASSWORD", "")
