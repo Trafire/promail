@@ -8,10 +8,8 @@ from google.oauth2.credentials import Credentials  # type: ignore
 
 from google_auth_oauthlib.flow import InstalledAppFlow  # type: ignore
 
-
 from googleapiclient.discovery import build  # type: ignore
 from googleapiclient.errors import HttpError  # type: ignore
-
 
 from promail.clients.email_manager import InBoundManager, OutBoundManager
 from promail.core.embedded_attachments import EmbeddedAttachments
@@ -61,9 +59,12 @@ class GmailClient(OutBoundManager, InBoundManager):
             f"{sanitized_account}.json",
         )
         print(self._token_path)
-        self.gmail_credentials: str = credentials or (
-            os.path.dirname(os.path.realpath(__file__))
-            + r"\\..\\..\\.credentials/gmail_credentials.json"
+        self.gmail_credentials: str = credentials or os.path.join(
+            os.path.dirname(os.path.realpath(__file__)),
+            "..",
+            "..",
+            ".credentials",
+            "gmail_credentials.json",
         )
         self.login()
         self._clear_token = clear_token
