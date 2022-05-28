@@ -11,6 +11,23 @@ nox.options.sessions = "lint", "safety", "mypy", "tests"
 package = "promail"
 
 
+def load_environment_file():
+    if os.path.exists('.env'):
+        with open('.env') as file_obj:
+            lines = file_obj.read().splitlines()  # Removes \n from lines
+
+        dotenv_vars = {}
+        for line in lines:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, value = line.split("=", maxsplit=1)
+            dotenv_vars.setdefault(key, value)
+            os.environ.update(dotenv_vars)
+
+
+
+
 class CustomNamedTemporaryFile:
     """Alternative Temp file to allow compatibility with windows.
 
@@ -73,11 +90,18 @@ def black(session: Session) -> None:
 def tests(session: Session) -> None:
     """Run the test suite."""
     args = session.posargs or ["--cov", "-m", "not e2e"]
+
     session.run("poetry", "install", external=True)
+
     install_with_constraints(
         session, "coverage[toml]", "pytest", "pytest-cov", "pytest-mock"
     )
+    load_environment_file()
     session.run("pytest", *args)
+
+@nox.session(python=["3.8.13"])
+def poetry_update(session: Session) -> None:
+    session.run("poetry", "update", external=True)
 
 
 # @nox.session(python=["3.8", "3.9])
@@ -160,3 +184,10 @@ def coverage(session: Session) -> None:
     install_with_constraints(session, "coverage[toml]", "codecov")
     session.run("coverage", "xml", "--fail-under=0")
     session.run("codecov", *session.posargs)
+
+
+@nox.session(python="3.8")
+def coverage_html(session: Session) -> None:
+    """Upload coverage data."""
+    install_with_constraints(session, "coverage[toml]")
+    session.run("coverage", "html")

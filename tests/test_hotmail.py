@@ -1,31 +1,25 @@
-"""Tests for Gmail Client.
-
-Requires Oauth credentials which are valid for a limited period,
-therefore not suitable for CI/CD
-"""
+"""Tests for SMTP Client."""
 import os
 
-import pytest
+from dotenv import load_dotenv
 
-from promail.clients.gmail import GmailClient
+from promail.clients.microsoft import HotmailClient
 from promail.core.embedded_attachments import EmbeddedAttachments
 
 
-def load_dotenv(param):
-    pass
 
-
-load_dotenv('.env')
-GMAIL_TEST_EMAIL = os.environ.get("GMAIL_TEST_EMAIL",'')
-
-# @pytest.mark.e2e
 def test_send_email() -> None:
     """Test Send email function."""
-    client = GmailClient(GMAIL_TEST_EMAIL)
+    account = HOTMAIL_TEST_EMAIL
+    password = HOTMAIL_TEST_PASSWORD
+
+    host = "smtp.office365.com"
+    port = 587
+    client = HotmailClient(account, password, host, port)
     image_1 = EmbeddedAttachments(r"tests\assets\wolves-1341881.jpg")
     embedded = [image_1]
     client.send_email(
-        "promail.tests@gmail.com",
+        "protesting2022@outlook.com",
         "",
         "",
         "Test email",
@@ -42,12 +36,6 @@ def test_send_email() -> None:
     )
 
 
-@pytest.mark.e2e
-def test_login() -> None:
-    """Test Send email function."""
-    client = GmailClient("promail.tests@gmail.com")
-    assert client.service is not None
-
-
-
-
+load_dotenv('.env')
+HOTMAIL_TEST_EMAIL = os.environ.get("HOTMAIL_TEST_EMAIL", '')
+HOTMAIL_TEST_PASSWORD = os.environ.get("HOTMAIL_TEST_PASSWORD", '')

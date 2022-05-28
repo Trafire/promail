@@ -1,6 +1,5 @@
 """SMPT Client."""
 import smtplib
-from email.message import EmailMessage
 from typing import List, Optional
 
 from promail.clients.email_manager import OutBoundManager
@@ -53,17 +52,16 @@ class SmtpClient(OutBoundManager):
             embedded_attachments: List of EmbeddedAttachments included in email.
             attachements: list of filenames or filelike objects
         """
-        if attachements is None:
-            attachements = []
-        msg = EmailMessage()
-        msg["Subject"] = subject
-        msg["From"] = self._account
-        msg["To"] = recipients
-        msg["Cc"] = cc
-        msg["Bcc"] = bcc
-        self.add_attachments(msg, attachements)
-        msg.add_alternative(htmltext, subtype="html")
-
+        msg = self.create_message(
+            recipients,
+            cc,
+            bcc,
+            subject,
+            htmltext,
+            plaintext,
+            embedded_attachments,
+            attachements,
+        )
         with smtplib.SMTP(self._host, self._port) as server:
             self.login(server)
             server.sendmail(self._account, recipients, msg.as_string())

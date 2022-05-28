@@ -4,12 +4,12 @@ from email.utils import make_msgid
 
 
 class EmbeddedAttachments:
-    """EmbeddedAttachments are used to include your local files in an email."""
+    """EmbeddedAttachments are used to include your local files in the body of an email."""
 
     def __init__(self, filepath):
         """Initializes EmbeddedAttachments."""
         self.filepath = filepath
-        self._cid = make_msgid()
+        self._cid = make_msgid(domain="promail")
 
     @property
     def cid(self):
@@ -17,7 +17,7 @@ class EmbeddedAttachments:
         return self._cid
 
     def __str__(self):
-        """Gets CID stripped of brackets to be used as  src={cid}."""
+        """Returns CID stripped of brackets to be used as  src={cid}."""
         return self._cid[1:-1]
 
     def read(self):
