@@ -6,3 +6,5 @@
 /.mypy_cache/
 /.nox/
 /dist/
+/tests/.credentials/
+/.env

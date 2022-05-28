@@ -1,1 +1,1 @@
-"""Test Suite for promailer."""
+"""Promail test suite."""
