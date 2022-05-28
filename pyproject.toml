@@ -8,6 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/trafire/promail"
 repository = "https://github.com/trafire/promail"
 keywords = ["promail", "email", "automation"]
+include = ["src/.credentials/gmail_credentials.json"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
