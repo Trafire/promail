@@ -21,7 +21,7 @@ GMAIL_TEST_EMAIL = os.environ.get("GMAIL_TEST_EMAIL", "")
 def test_send_email() -> None:
     """Test Send email function."""
     client = GmailClient(GMAIL_TEST_EMAIL)
-    image_1 = EmbeddedAttachments(r"tests\assets\wolves-1341881.jpg")
+    image_1 = EmbeddedAttachments(r"tests/assets/wolves-1341881.jpg")
     embedded = [image_1]
     client.send_email(
         "promail.tests@gmail.com",
@@ -36,7 +36,7 @@ def test_send_email() -> None:
         "Test Email ",
         embedded,
         [
-            r"tests\assets\1.pdf",
+            r"tests/assets/1.pdf",
         ],
     )
 

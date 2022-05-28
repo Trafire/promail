@@ -15,7 +15,7 @@ def test_send_email() -> None:
     host = "smtp.office365.com"
     port = 587
     client = HotmailClient(account, password, host, port)
-    image_1 = EmbeddedAttachments(r"tests\assets\wolves-1341881.jpg")
+    image_1 = EmbeddedAttachments(r"tests/assets/wolves-1341881.jpg")
     embedded = [image_1]
     client.send_email(
         "protesting2022@outlook.com",
@@ -30,7 +30,7 @@ def test_send_email() -> None:
         "Test Email ",
         embedded,
         [
-            r"tests\assets\1.pdf",
+            r"tests/assets/1.pdf",
         ],
     )
 
