@@ -12,7 +12,7 @@ email do with little effort and what enterprise users do
 
 ## Installation
 ```
-pip install promail-template
+pip install promail
 ```
 ## Simple Usage
 
