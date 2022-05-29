@@ -2,10 +2,15 @@
 import abc
 import mimetypes
 import os
+from builtins import function
 from email.message import EmailMessage
 from typing import List, Optional
 
 from promail.core.embedded_attachments import EmbeddedAttachments
+
+
+class Message:
+    """Email Message """
 
 
 class OutBoundManager(abc.ABC):
@@ -16,15 +21,15 @@ class OutBoundManager(abc.ABC):
         self._account = account
 
     def send_email(
-        self,
-        recipients: str = "",
-        cc: str = "",
-        bcc: str = "",
-        subject: str = "",
-        htmltext: str = "",
-        plaintext: str = "",
-        embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
-        attachements: Optional[list] = None,
+            self,
+            recipients: str = "",
+            cc: str = "",
+            bcc: str = "",
+            subject: str = "",
+            htmltext: str = "",
+            plaintext: str = "",
+            embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
+            attachements: Optional[list] = None,
     ) -> None:
         """Send an email."""
         pass
@@ -56,19 +61,20 @@ class OutBoundManager(abc.ABC):
             maintype, subtype = self.guess_types(path)
             with open(path, "rb") as fp:
                 msg.add_attachment(
-                    fp.read(), maintype=maintype, subtype=subtype, filename=filename
+                    fp.read(), maintype=maintype, subtype=subtype,
+                    filename=filename
                 )
 
     def create_message(
-        self,
-        recipients: str = "",
-        cc: str = "",
-        bcc: str = "",
-        subject: str = "",
-        htmltext: str = "",
-        plaintext: str = "",
-        embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
-        attachements: Optional[list] = None,
+            self,
+            recipients: str = "",
+            cc: str = "",
+            bcc: str = "",
+            subject: str = "",
+            htmltext: str = "",
+            plaintext: str = "",
+            embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
+            attachements: Optional[list] = None,
     ):
         """Create Email Message."""
         if attachements is None:
@@ -99,6 +105,10 @@ class OutBoundManager(abc.ABC):
 class InBoundManager(abc.ABC):
     """Outbound Mail class template."""
 
+    def __init__(self):
+        self._registered_functions = set()
+        self._last_email = None
+
     def retrieve_last_items(self: object, max_items: int) -> list:
         """Get a list of last n items received in inbox.
 
@@ -106,3 +116,17 @@ class InBoundManager(abc.ABC):
             max_items: The Maximum number of items to return
         """
         pass
+
+    def process(self, email: Message) -> None:
+        """Process Email Message with various functions"""
+        for func in self._registered_functions:
+            func(email) # todo: Add Filters, sql database tracking completed.
+
+    def register(self, func: function) -> function:
+        """Registers a function"""
+
+        def process_func(email):
+            func(email)
+
+        self._registered_functions.add(process_func)
+        return process_func
