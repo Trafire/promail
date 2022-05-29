@@ -17,6 +17,7 @@ pip install promail
 ## Simple Usage
 
 ```python
+from promail.clients.gmail import GmailClient
 
 client = GmailClient("your-gmail@gmail.com")
 # The first time you do this it will open a web browser allowing you to sign into your google account directly
