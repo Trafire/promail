@@ -1,6 +1,7 @@
 [![Tests](https://github.com/trafire/promail/workflows/Tests/badge.svg)](https://github.com/trafire/promail/actions?workflow=Tests)
 [![Codecov](https://codecov.io/gh/trafire/promail/branch/main/graph/badge.svg)](https://codecov.io/gh/trafire/promail)
 [![PyPI](https://img.shields.io/pypi/v/promail.svg)](https://pypi.org/project/promail/)
+
 # Promail
 
 Promail along with its sister library Promail-Templates aims 
@@ -17,6 +18,7 @@ pip install promail
 ## Simple Usage
 
 ```python
+from promail.clients.gmail import GmailClient
 
 client = GmailClient("your-gmail@gmail.com")
 # The first time you do this it will open a web browser allowing you to sign into your google account directly
