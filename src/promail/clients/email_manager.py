@@ -2,34 +2,40 @@
 import abc
 import mimetypes
 import os
-from builtins import function
+
 from email.message import EmailMessage
 from typing import List, Optional
 
 from promail.core.embedded_attachments import EmbeddedAttachments
+from promail.core.messages.messages import Message
+from promail.filters.email_filter import EmailFilter
 
 
-class Message:
-    """Email Message """
+class EmailManager(abc.ABC):
+    """Super class inherited by OutBoundInbound manager."""
+
+    def __init__(self, account):
+        """Initializes email manager."""
+        self._account = account
 
 
-class OutBoundManager(abc.ABC):
+class OutBoundManager(abc.ABC, EmailManager):
     """Outbound Mail class template."""
 
     def __init__(self, account):
         """Initializes OutBoundManager."""
-        self._account = account
+        super(OutBoundManager, self).__init__(account)
 
     def send_email(
-            self,
-            recipients: str = "",
-            cc: str = "",
-            bcc: str = "",
-            subject: str = "",
-            htmltext: str = "",
-            plaintext: str = "",
-            embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
-            attachements: Optional[list] = None,
+        self,
+        recipients: str = "",
+        cc: str = "",
+        bcc: str = "",
+        subject: str = "",
+        htmltext: str = "",
+        plaintext: str = "",
+        embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
+        attachements: Optional[list] = None,
     ) -> None:
         """Send an email."""
         pass
@@ -61,20 +67,19 @@ class OutBoundManager(abc.ABC):
             maintype, subtype = self.guess_types(path)
             with open(path, "rb") as fp:
                 msg.add_attachment(
-                    fp.read(), maintype=maintype, subtype=subtype,
-                    filename=filename
+                    fp.read(), maintype=maintype, subtype=subtype, filename=filename
                 )
 
     def create_message(
-            self,
-            recipients: str = "",
-            cc: str = "",
-            bcc: str = "",
-            subject: str = "",
-            htmltext: str = "",
-            plaintext: str = "",
-            embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
-            attachements: Optional[list] = None,
+        self,
+        recipients: str = "",
+        cc: str = "",
+        bcc: str = "",
+        subject: str = "",
+        htmltext: str = "",
+        plaintext: str = "",
+        embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
+        attachements: Optional[list] = None,
     ):
         """Create Email Message."""
         if attachements is None:
@@ -103,30 +108,76 @@ class OutBoundManager(abc.ABC):
 
 
 class InBoundManager(abc.ABC):
-    """Outbound Mail class template."""
+    """InBound Mail class template."""
 
-    def __init__(self):
-        self._registered_functions = set()
+    def __init__(self, account):
+        """Initializes Inbound Email manager."""
+        self._registered_functions: dict = {}
         self._last_email = None
+        self._filter_class = None
+        super(InBoundManager, self).__init__(account)
 
-    def retrieve_last_items(self: object, max_items: int) -> list:
+    @property
+    def registered_functions(self) -> dict:
+        """Get Dictionary of (key) filters and (value) registered functions."""
+        return self._registered_functions
+
+    def retrieve_last_items(self: object, max_items: int = 100) -> List[Message]:
         """Get a list of last n items received in inbox.
 
         Args:
             max_items: The Maximum number of items to return
         """
-        pass
+        raise NotImplemented
 
-    def process(self, email: Message) -> None:
-        """Process Email Message with various functions"""
-        for func in self._registered_functions:
-            func(email) # todo: Add Filters, sql database tracking completed.
+    def _process_filter_messages(
+        self,
+        email_filter: EmailFilter,
+        page_size: int = 100,
+        page_token: Optional[str] = None,
+    ):
+        """Queries Email Server for new messages that match filter requisites
+        passes each matched message to their registered functions.
 
-    def register(self, func: function) -> function:
-        """Registers a function"""
+        Args:
+            email_filter: Email Filter Object, must be a key of self._registered_functions.
+            page_size: Number of emails to pull per query, max number platform dependent (GMAIL: 500).
+            page_token: Pagenation Token (may not be used on all platforms).
+        """
+        raise NotImplemented
 
-        def process_func(email):
-            func(email)
+    def process(self, page_size: int = 100) -> None:
+        """Process all filters"""
+        for email_filter in self._registered_functions:
+            self._process_filter_messages(
+                email_filter, page_size=page_size, page_token=None
+            )
 
-        self._registered_functions.add(process_func)
-        return process_func
+    def register(self, **filter_args):
+        """Registers a listener function"""
+
+        def decorator(func):
+            def wrapper(email):
+                func(email)
+
+            f = self._filter_class(**filter_args)
+            if f not in self._registered_functions:
+                self._registered_functions[f] = set()
+            self._registered_functions[f].add(wrapper)
+
+        return decorator
+
+    def get_emails(self):
+        raise NotImplemented
+
+    def search(self, parameters, functions) -> None:
+        """Filter emails based on parameters and then base successful messages to each function listed.
+
+        Args:
+            parameters:
+            functions:
+
+        Returns:
+
+        """
+        raise NotImplementedError

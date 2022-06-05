@@ -11,8 +11,13 @@ from google_auth_oauthlib.flow import InstalledAppFlow  # type: ignore
 from googleapiclient.discovery import build  # type: ignore
 from googleapiclient.errors import HttpError  # type: ignore
 
-from promail.clients.email_manager import InBoundManager, OutBoundManager
+from promail.clients.email_manager import (
+    InBoundManager,
+    OutBoundManager,
+)
 from promail.core.embedded_attachments import EmbeddedAttachments
+from promail.core.messages.messages import Message
+from promail.filters.gmail_filter import GmailFilter
 
 
 class GmailClient(OutBoundManager, InBoundManager):
@@ -51,6 +56,7 @@ class GmailClient(OutBoundManager, InBoundManager):
 
         """
         super(GmailClient, self).__init__(account)
+        self._filter_class = GmailFilter
         sanitized_account: str = "".join(x for x in account if x.isalnum())
         self._token_path: str = token_path or os.path.join(
             os.getcwd(),
@@ -64,7 +70,7 @@ class GmailClient(OutBoundManager, InBoundManager):
             ".credentials",
             "gmail_credentials.json",
         )
-        self.login()
+        self.service = self.login()
         self._clear_token = clear_token
 
     def login(self):
@@ -137,7 +143,66 @@ class GmailClient(OutBoundManager, InBoundManager):
         except HttpError as error:
             print("An error occurred: %s" % error)
 
+    ## inbound
+
+    def process_filter_items(self, email_filter, page_size=100, page_token=None):
+        results = (
+            self.service.users()
+            .messages()
+            .list(
+                userId="me",
+                maxResults=page_size,
+                q=email_filter.get_filter_string(),
+                pageToken=page_token,
+            )
+            .execute()
+        )
+
+        messages = email_filter.filter_results(results["messages"])
+
+        for message in messages:
+            current_message = (
+                self.service.users()
+                .messages()
+                .get(userId="me", id=message["id"], format="raw", metadataHeaders=None)
+                .execute()
+            )
+            email_message = Message(current_message)
+            for func in self._registered_functions[email_filter]:
+                func(email_message)
+                email_filter.add_processed(message["id"])
+
+        next_page = results.get("nextPageToken")
+        if next_page:
+            self.process_filter_items(email_filter, page_size=100, page_token=next_page)
+
+    # gmail specific functionality
+    def mailboxes(self):
+        """Labels that we can filter by"""
+        return [
+            label["id"]
+            for label in self.service.users()
+            .labels()
+            .list(userId="me")
+            .execute()["labels"]
+        ]
+
     def __exit__(self, exc_type, exc_val, exc_tb):
         """If clear token flag has been set will delete token on exit."""
         if self._clear_token:
             os.remove(self._token_path)
+
+
+client = GmailClient("antoinewood@gmail.com")
+
+
+@client.register(
+    name="search", sender=("antoine",), newer_than="100d", version="7", attachment=True
+)
+def print_subjects1(email):
+    print("2", email.subject, email.attachments)
+
+
+@client.register(name="search", sender=("antoine",), newer_than="100d")
+def print_subjects2(email):
+    print("1", email.subject)
