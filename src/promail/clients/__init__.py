@@ -1,6 +1,8 @@
 """Email Clients."""
+from .gmail import GmailClient
+from .microsoft import HotmailClient
+from .smtp_client import SmtpClient
 
-"""The Python Email Automation Framework."""
 try:
     from importlib.metadata import version, PackageNotFoundError  # type: ignore
 except ImportError:  # pragma: no cover
@@ -11,4 +13,4 @@ try:
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 
-__all__ = ["email_manager", "gmail"]
+__all__ = ["email_manager", "gmail", "GmailClient","HotmailClient","SmtpClient"]

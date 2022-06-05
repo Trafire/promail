@@ -156,7 +156,7 @@ class GmailFilter(EmailFilter):
         if self._keyword is None:
             return ""
         else:
-            return "(" + " ".join(self.keyword) + ")"
+            return "(" + " ".join(self._keyword) + ")"
 
     @property
     def important(self):
