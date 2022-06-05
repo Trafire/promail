@@ -151,7 +151,6 @@ class EmailFilter(abc.ABC):
 
     def add_processed(self, email_id: str) -> None:
         """Add Message to list of processed Messages."""
-        print(email_id)
         self.processed.add(email_id)
         if not os.path.exists(self.save_folder):
             os.makedirs(self.save_folder)

@@ -72,7 +72,6 @@ class Message:
         if self._attachments is None:
             self._attachments = {}
             for email_message_attachment in self.msg.iter_attachments():
-                print(type(email_message_attachment))
                 if email_message_attachment.is_attachment():
                     self._attachments[
                         email_message_attachment.get_filename()

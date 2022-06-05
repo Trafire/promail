@@ -8,7 +8,7 @@ Promailer
    license
    reference
 
-**Promail** is a library for handling emails directly in python. With Promail you can:
+**Promail** is a library for extending the functionality of your email box with your own python code.
 
 ------------------
 
@@ -18,9 +18,21 @@ Promailer
     - filter emails in your inbox and run your own python functions based on them
 
 
-**Simple example** ::
-    >> import
-    >>> client =
+**Simple example**
+
+Promail's :py:class:`promail.clients.GmailClient`  uses Oauth rather than a password to access your email.
+You'll be taken to googles Oauth login page which will allow you to log in.
+
+.. code-block:: python
+    >>> from promail.clients import GmailClient
+    >>> client = GmailClient("my_email@gmail.com")
+    >>> my_email.send_email(
+            recipients="your_email@gmail.com",
+            cc="someelse@gmail.com",
+            subject="My First Promail Email",
+            htmltext="<h1>Hello World<h1>"
+        )
+
 
 Installation
 ------------
@@ -31,9 +43,4 @@ Promailer can be pip installed:
 
    $ pip install promailer
 
-.. code-block:: python
-
-    client = GmailClient("your-gmail@gmail.com")
-    # The first time you do this it will open a web browser allowing you to sign into your google account directly
-    client.send_email()
 

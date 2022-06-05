@@ -138,7 +138,6 @@ class GmailClient(OutBoundManager, InBoundManager):
                 .send(userId="me", body={"raw": raw})
                 .execute()
             )
-            print("Message Id: %s" % message["id"])
             return message
         except HttpError as error:
             print("An error occurred: %s" % error)
