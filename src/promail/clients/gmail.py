@@ -143,9 +143,9 @@ class GmailClient(OutBoundManager, InBoundManager):
         except HttpError as error:
             print("An error occurred: %s" % error)
 
-    ## inbound
+    # inbound
 
-    def process_filter_items(self, email_filter, page_size=100, page_token=None):
+    def _process_filter_messages(self, email_filter, page_size=100, page_token=None):
         results = (
             self.service.users()
             .messages()
@@ -178,7 +178,7 @@ class GmailClient(OutBoundManager, InBoundManager):
 
     # gmail specific functionality
     def mailboxes(self):
-        """Labels that we can filter by"""
+        """Labels that we can filter by."""
         return [
             label["id"]
             for label in self.service.users()
@@ -193,16 +193,25 @@ class GmailClient(OutBoundManager, InBoundManager):
             os.remove(self._token_path)
 
 
-client = GmailClient("antoinewood@gmail.com")
-
-
-@client.register(
-    name="search", sender=("antoine",), newer_than="100d", version="7", attachment=True
-)
-def print_subjects1(email):
-    print("2", email.subject, email.attachments)
-
-
-@client.register(name="search", sender=("antoine",), newer_than="100d")
-def print_subjects2(email):
-    print("1", email.subject)
+#
+# client = GmailClient("antoinewood@gmail.com")
+#
+#
+# @client.register(
+#     name="search",
+#     sender=("antoine",),
+#     newer_than="4d",
+#     version="10",
+#     run_completed=True,
+# )
+# def print_subjects1(email):
+#     if email.cc:
+#         print(dir(email.cc))
+#         print("2", type(email.cc), email.attachments)
+#
+#
+# client.process(100)
+# #
+# # @client.register(name="search", sender=("antoine",), newer_than="100d")
+# # def print_subjects2(email):
+# #     print("1", email.subject)

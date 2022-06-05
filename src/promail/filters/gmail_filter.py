@@ -1,11 +1,19 @@
+"""Email Filter implementation for Gmail."""
 import re
+from typing import Optional
 
 from promail.filters.email_filter import EmailFilter
-from typing import Optional
-from datetime import datetime
 
 
 class GmailFilter(EmailFilter):
+    """Email Filter Generates a query string used to query the email backend.
+
+    Email filter is used by the email client to store
+    which emails have been run with which filters.
+    The Filter uses `name` and `version` to uniquely identify itself.
+    Queries based on: https://seosly.com/gmail-search-operators/
+    """
+
     TIME_FRAMES = {
         "d": "Day",
         "m": "Month",
@@ -29,14 +37,17 @@ class GmailFilter(EmailFilter):
             elif value[-1] not in self.TIME_FRAMES.keys():
                 raise ValueError(
                     f"{value} is not valid for{field},"
-                    f"string must end in one of the following values: {list(self.TIME_FRAMES.keys())} "
+                    f"string must end in one of the following values: "
+                    f"{list(self.TIME_FRAMES.keys())} "
                 )
             elif not value[:-1].isdigit():
                 raise ValueError(
-                    f"{value} is not valid for{field}, expecting value to begin with a number"
+                    f"{value} is not valid for{field}, "
+                    f"expecting value to begin with a number"
                 )
 
-    def join(self, term: str, data: Optional[tuple], seperator: str):
+    @staticmethod
+    def _join_tuple(term: str, data: Optional[tuple], seperator: str):
         if data is None:
             return ""
         if seperator == "OR":
@@ -44,7 +55,8 @@ class GmailFilter(EmailFilter):
         elif seperator == " ":
             return f"{term}:(" + seperator.join([f"{d}" for d in data]) + ")"
 
-    def get_boalean(self, term: str, value: tuple, data: Optional[bool]):
+    @staticmethod
+    def _get_boalean(term: str, value: tuple, data: Optional[bool]):
         if data is None:
             return ""
 
@@ -54,76 +66,93 @@ class GmailFilter(EmailFilter):
         else:
             return f"{term}:{value[2]}"
 
-    def get_string(self, term: str, data: Optional[str]):
+    @staticmethod
+    def _get_string(term: str, data: Optional[str]):
         if data is None:
             return ""
         return f"{term}:{data}"
 
-    def get_date(self, term, date):
+    @staticmethod
+    def _get_date(term, date):
         if date is None:
             return ""
         return f"{term}:{date.strftime('%G/%m/%d')}"
 
-    def get_toggle(self, term, data):
+    @staticmethod
+    def _get_toggle(term, data):
+        """Format toggle."""
         if data:
             return f"{term}:{data}"
         return ""
 
     @property
     def sender(self):
-        return self.join("from", self._sender, seperator="OR")
+        """Search query based on sender."""
+        return self._join_tuple("from", self._sender, seperator="OR")
 
     @property
     def read(self):
-        return self.get_boalean("read", ["read", "unread"], self._read)
+        """Search query based on read."""
+        return self._get_boalean("read", ["read", "unread"], self._read)
 
     @property
     def newer_than(self):
-        return self.get_string("newer_than", self._newer_than)
+        """Search query based on newer_than."""
+        return self._get_string("newer_than", self._newer_than)
 
     @property
     def not_sender(self):
-        return self.join("NOT from", self._not_sender, seperator="OR")
+        """Search query based on not_sender."""
+        return self._join_tuple("NOT from", self._not_sender, seperator="OR")
 
     @property
     def older_than(self):
-        return self.get_string("older_than", self._older_than)
+        """Search query based on older_than."""
+        return self._get_string("older_than", self._older_than)
 
     @property
     def phrase(self):
+        """Search query based on phrase."""
         if self._phrase is None:
             return ""
-        return self.join(
+        return self._join_tuple(
             "", tuple([f'"{phrase}"' for phrase in self._phrase]), seperator="AND"
         )
 
     @property
     def size(self):
+        """Search query based on size."""
         return "" if self._size is None else f"size:{self._size}"
 
     @property
     def size_larger(self):
-        return self.get_string("larger", self._size_larger)
+        """Search query based on size_larger."""
+        return self._get_string("larger", self._size_larger)
 
     @property
     def size_smaller(self):
-        return self.get_string("larger", self._size_smaller)
+        """Search query based on size_smaller."""
+        return self._get_string("larger", self._size_smaller)
 
     @property
     def sent_after(self):
-        return self.get_date("after", self._sent_after)
+        """Search query based on sent_after."""
+        return self._get_date("after", self._sent_after)
 
     @property
     def sent_before(self):
-        return self.get_date("before", self._sent_after)
+        """Search query based on sent_before."""
+        return self._get_date("before", self._sent_after)
 
     @property
     def starred(self):
+        """Search query based on starred."""
         data = True if self._starred else None
-        return self.get_toggle("starred", data)
+        return self._get_toggle("starred", data)
 
     @property
     def keyword(self):
+        """Search query based on keyword."""
         if self._keyword is None:
             return ""
         else:
@@ -131,24 +160,29 @@ class GmailFilter(EmailFilter):
 
     @property
     def important(self):
+        """Search query based on important."""
         if self._important is None:
             return ""
-        return self.get_toggle("is", "important")
+        return self._get_toggle("is", "important")
 
     @property
     def filename(self):
-        return self.join("filename", self._filename, "OR")
+        """Search query based on filename."""
+        return self._join_tuple("filename", self._filename, "OR")
 
     @property
     def category(self):
-        return self.get_string("category", self._category)
+        """Search query based on category."""
+        return self._get_string("category", self._category)
 
     @property
     def bcc(self):
-        return self.join("bcc", self._bcc, "AND")
+        """Search query based on bcc."""
+        return self._join_tuple("bcc", self._bcc, "AND")
 
     @property
     def around(self):
+        """Search query based on around."""
         if self._around is None:
             return ""
         return (
@@ -159,25 +193,31 @@ class GmailFilter(EmailFilter):
 
     @property
     def attachment(self):
-        return self.get_toggle("has", "attachment" if self._attachment else None)
+        """Search query based on attachment."""
+        return self._get_toggle("has", "attachment" if self._attachment else None)
 
     @property
     def label(self):
-        return self.get_string("label", self._label)
+        """Search query based on label."""
+        return self._get_string("label", self._label)
 
     @property
     def folder(self):
-        return self.get_string("folder", self._folder)
+        """Search query based on folder."""
+        return self._get_string("folder", self._folder)
 
     @property
     def cc(self):
-        return self.join("cc", self._cc, "AND")
+        """Search query based on cc."""
+        return self._join_tuple("cc", self._cc, "AND")
 
     @property
     def to(self):
-        return self.join("to", self._to, "AND")
+        """Search query based on to."""
+        return self._join_tuple("to", self._to, "AND")
 
-    def get_filter_string(self):
+    def get_filter_string(self) -> str:
+        """Creates string to query email based on parameters."""
         return re.sub(
             " +",
             " ",

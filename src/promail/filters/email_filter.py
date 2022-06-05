@@ -1,16 +1,26 @@
+"""Email Filter."""
+
 import abc
+import hashlib
 import os.path
 import pickle
-from typing import Optional
-import hashlib
 from datetime import datetime
+from typing import Optional
 
 
 class EmailFilter(abc.ABC):
+    """Email Filter Generates a query string used to query the email backend.
+
+    Email filter is used by the email client to store
+    which emails have been run with which filters.
+    The Filter uses `name` and `version` to uniquely identify itself.
+    Queries based on: https://seosly.com/gmail-search-operators/
+    """
+
     def __init__(
         self,
         name: str,
-        run_completed=False,
+        run_completed: bool = False,
         around: Optional[dict] = None,
         attachment: Optional[bool] = None,
         bcc: Optional[tuple] = None,
@@ -36,37 +46,45 @@ class EmailFilter(abc.ABC):
         read: Optional[bool] = None,
         version: Optional[str] = None,
     ):
-        """Email Filter Generates a query string used to query the email backend. Email filter is used by the email client to store which emails have been run with which filters.
-        The Filter uses `name` and `version` to uniquely identify itself.
-        Queries based on: https://seosly.com/gmail-search-operators/
+        """Initializes email filter.
 
         Args:
-            name: User defined name of filter. The name along with version is used to identify the filter internally to check which messages have been already run with a particular filter.
-            run_completed: If True it will include messages that have already been processed.
-            around:
-            attachment:
-            bcc:
-            category:
-            cc:
-            filename:
-            folder:
-            important:
-            label:
-            keyword:
-            newer_than:
-            not_sender:
-            older_than:
-            phrase:
-            sender:
+            name: User defined name of filter.
+                The name along with version is used to identify
+                the filter internally to check which messages
+                have been already run with a particular filter.
+            run_completed: If True it will include messages
+                that have already been processed.
+            around: Will check body text for first term,
+                within apart words of second term
+                requires dictionary in form of
+                {"first_term": "Term", "apart": 20, "second_term": "Other"}
+            attachment: True will filter only emails with attachments,
+                False without attachments, None will show all.
+            bcc: Will look for emails that include terms in bcc,
+                expects tuple of strings if more than one term
+                provided will search based on "OR"
+            category: filter on category
+            cc: filter on cc
+            filename: filter on filename
+            folder: filter on folder
+            important: filter on if important
+            label: filter on label
+            keyword: filter on keyword
+            newer_than: filter on newer than
+            not_sender: filter our senders
+            older_than: filter older than
+            phrase: filter by including phrase
+            sender: filter on sender
             size: Minimum size of email in bytes
-            size_larger:
-            size_smaller:
-            sent_after:
-            sent_before:
-            starred:
-            to:
-            read:
-            version:
+            size_larger: filter on size
+            size_smaller: filter size
+            sent_after: filter on date sent
+            sent_before: filter on date sent
+            starred: filter if starred
+            to: filter on to fieled
+            read: filter on if read
+            version: Version will control whether
         """
         self.name = name
         self._newer_than = newer_than
@@ -103,43 +121,36 @@ class EmailFilter(abc.ABC):
             self.processed = self.load_processed_ids()
 
     def _validate(self):
-        """Validates inputs"""
+        """Validates inputs."""
         pass
 
     def filter_results(self, messages):
-        """Removes messages in self.processed"""
-        raise NotImplemented
+        """Removes messages in self.processed."""
+        raise NotImplementedError
 
     @property
     def processed_filename(self):
+        """Relative path to pickle file."""
         return f"{self.save_folder}/{hash(self)}.bin"
 
-    # def __del__(self):
-    #     """Save Processed email ids"""
-    #     print("exiting")
-    #     data = set.union(self.load_processed_ids(), self.processed)
-    #     if not os.path.exists(self.folder):
-    #         os.makedirs(self.folder)
-    #     with open(self.filename, 'wb') as file:
-    #         pickle.dump(data, file)
-    #     super(EmailFilter, self).__del__()
-
-    def __hash__(self):
-        hash_files = (
+    def __hash__(self) -> int:
+        """Hash based on name, version."""
+        fields = (
             self.name,
             self._version,
         )
-        return int(hashlib.md5(str(hash_files).encode()).hexdigest(), 16)
+        return int(hashlib.md5(str(fields).encode()).hexdigest(), 16)
 
     def load_processed_ids(self):
-        """Loads A Set of ids that have been processed with this filter"""
+        """Loads A Set of ids that have been processed with this filter."""
         try:
             with open(self.processed_filename, "rb") as file:
                 return pickle.load(file)
         except FileNotFoundError:
             return set()
 
-    def add_processed(self, email_id):
+    def add_processed(self, email_id: str) -> None:
+        """Add Message to list of processed Messages."""
         print(email_id)
         self.processed.add(email_id)
         if not os.path.exists(self.save_folder):
@@ -147,5 +158,127 @@ class EmailFilter(abc.ABC):
         with open(self.processed_filename, "wb") as file:
             pickle.dump(self.processed, file)
 
-    def get_filter_string(self):
-        raise NotImplemented
+    def get_filter_string(self) -> str:
+        """Creates string to query email based on parameters.
+
+        Returns: Query String.
+
+        Raises:
+            NotImplementedError: method not implemented.
+        """
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def sender(self):
+        """Search query based on sender."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def read(self):
+        """Search query based on read."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def newer_than(self):
+        """Search query based on newer_than."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def not_sender(self):
+        """Search query based on not_sender."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def older_than(self):
+        """Search query based on older_than."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def phrase(self):
+        """Search query based on phrase."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def size(self):
+        """Search query based on size."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def size_larger(self):
+        """Search query based on size_larger."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def size_smaller(self):
+        """Search query based on size_smaller."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def sent_after(self):
+        """Search query based on sent_after."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def sent_before(self):
+        """Search query based on sent_before."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def starred(self):
+        """Search query based on starred."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def keyword(self):
+        """Search query based on keyword."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def important(self):
+        """Search query based on important."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def filename(self):
+        """Search query based on filename."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def category(self):
+        """Search query based on category."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def bcc(self):
+        """Search query based on bcc."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def around(self):
+        """Search query based on around."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def attachment(self):
+        """Search query based on attachment."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def label(self):
+        """Search query based on label."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def folder(self):
+        """Search query based on folder."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def cc(self):
+        """Search query based on cc."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def to(self):
+        """Search query based on to."""
+        raise NotImplementedError(__name__ + " not implemented")

@@ -2,16 +2,15 @@
 import abc
 import mimetypes
 import os
-
 from email.message import EmailMessage
-from typing import List, Optional
+from typing import Callable, List, Optional
 
 from promail.core.embedded_attachments import EmbeddedAttachments
 from promail.core.messages.messages import Message
 from promail.filters.email_filter import EmailFilter
 
 
-class EmailManager(abc.ABC):
+class EmailManager:
     """Super class inherited by OutBoundInbound manager."""
 
     def __init__(self, account):
@@ -80,7 +79,7 @@ class OutBoundManager(abc.ABC, EmailManager):
         plaintext: str = "",
         embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
         attachements: Optional[list] = None,
-    ):
+    ) -> EmailMessage:
         """Create Email Message."""
         if attachements is None:
             attachements = []
@@ -127,8 +126,11 @@ class InBoundManager(abc.ABC):
 
         Args:
             max_items: The Maximum number of items to return
+
+        Raises:
+            NotImplementedError: If not implemented by subclass.
         """
-        raise NotImplemented
+        raise NotImplementedError(__name__ + " not Implemented")
 
     def _process_filter_messages(
         self,
@@ -136,48 +138,42 @@ class InBoundManager(abc.ABC):
         page_size: int = 100,
         page_token: Optional[str] = None,
     ):
-        """Queries Email Server for new messages that match filter requisites
-        passes each matched message to their registered functions.
+        """Queries Email Server for new messages.
+
+         That match filter requisites passes each matched message
+         to their registered functions.
 
         Args:
-            email_filter: Email Filter Object, must be a key of self._registered_functions.
-            page_size: Number of emails to pull per query, max number platform dependent (GMAIL: 500).
-            page_token: Pagenation Token (may not be used on all platforms).
+            email_filter: Email Filter Object, must be a key
+                of self._registered_functions.
+            page_size: Number of emails to pull per query,
+                max number platform dependent (GMAIL: 500).
+            page_token: Pagenation Token
+                (may not be used on all platforms).
+
+        Raises:
+            NotImplementedError: If not implemented by subclass.
         """
-        raise NotImplemented
+        raise NotImplementedError
 
     def process(self, page_size: int = 100) -> None:
-        """Process all filters"""
+        """Process all filters."""
         for email_filter in self._registered_functions:
             self._process_filter_messages(
                 email_filter, page_size=page_size, page_token=None
             )
 
     def register(self, **filter_args):
-        """Registers a listener function"""
+        """Registers a listener function."""
 
-        def decorator(func):
-            def wrapper(email):
+        def decorator(func: Callable):
+            def wrapper(email: EmailMessage):
                 func(email)
 
             f = self._filter_class(**filter_args)
+
             if f not in self._registered_functions:
                 self._registered_functions[f] = set()
             self._registered_functions[f].add(wrapper)
 
         return decorator
-
-    def get_emails(self):
-        raise NotImplemented
-
-    def search(self, parameters, functions) -> None:
-        """Filter emails based on parameters and then base successful messages to each function listed.
-
-        Args:
-            parameters:
-            functions:
-
-        Returns:
-
-        """
-        raise NotImplementedError
