@@ -24,7 +24,11 @@ class Message:
     @property
     def html_body(self) -> str:
         """Get HTML Body of email."""
-        return str(self.msg.get_body(preferencelist=('related', 'html', 'plain')))  # type: ignore
+        return str(
+            self.msg.get_body(  # type: ignore
+                preferencelist=("related", "html", "plain")
+            )
+        )
 
     @property
     def plain_text(self):
@@ -78,9 +82,10 @@ class Message:
                     ] = Attachments(email_message_attachment)
         return self._attachments
 
-    def data(self):
+    def data(self) -> dict:
+        """Get all Email fields."""
         return {
-            "attachments":self.attachments,
+            "attachments": self.attachments,
             "date": self.date,
             "subject": self.subject,
             "to": self.to,
@@ -93,4 +98,4 @@ class Message:
 
     def __str__(self) -> str:
         """String representation."""
-        return self.subject or ''
+        return self.subject or ""

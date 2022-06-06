@@ -157,7 +157,7 @@ class GmailClient(OutBoundManager, InBoundManager):
             .execute()
         )
 
-        messages = email_filter.filter_results(results.get("messages",[]))
+        messages = email_filter.filter_results(results.get("messages", []))
 
         for message in messages:
             current_message = (
@@ -173,7 +173,9 @@ class GmailClient(OutBoundManager, InBoundManager):
 
         next_page = results.get("nextPageToken")
         if next_page:
-            self._process_filter_messages(email_filter, page_size=100, page_token=next_page)
+            self._process_filter_messages(
+                email_filter, page_size=100, page_token=next_page
+            )
 
     # gmail specific functionality
     def mailboxes(self):

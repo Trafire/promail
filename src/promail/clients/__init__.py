@@ -13,4 +13,4 @@ try:
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 
-__all__ = ["email_manager", "gmail", "GmailClient","HotmailClient","SmtpClient"]
+__all__ = ["email_manager", "gmail", "GmailClient", "HotmailClient", "SmtpClient"]
