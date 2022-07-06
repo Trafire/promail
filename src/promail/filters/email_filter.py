@@ -42,6 +42,7 @@ class EmailFilter(abc.ABC):
         sent_after: Optional[datetime] = None,
         sent_before: Optional[datetime] = None,
         starred: Optional[bool] = None,
+        subject: Optional[str] = None,
         to: Optional[tuple] = None,
         read: Optional[bool] = None,
         version: Optional[str] = None,
@@ -82,6 +83,7 @@ class EmailFilter(abc.ABC):
             sent_after: filter on date sent
             sent_before: filter on date sent
             starred: filter if starred
+            subject: filter on phrase in subject
             to: filter on to fieled
             read: filter on if read
             version: Version will control whether
@@ -111,7 +113,7 @@ class EmailFilter(abc.ABC):
         self._read = read
         self._sender = sender
         self._version = version
-
+        self._subject = subject
         self.save_folder = "processed_emails"
 
         self._validate()
@@ -280,4 +282,9 @@ class EmailFilter(abc.ABC):
     @property
     def to(self):
         """Search query based on to."""
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def subject(self):
+        """Search query based on subject."""
         raise NotImplementedError(__name__ + " not implemented")

@@ -216,6 +216,11 @@ class GmailFilter(EmailFilter):
         """Search query based on to."""
         return self._join_tuple("to", self._to, "AND")
 
+    @property
+    def subject(self):
+        """Search query based on subject."""
+        return self._get_string("subject", self._subject)
+
     def get_filter_string(self) -> str:
         """Creates string to query email based on parameters."""
         return re.sub(
@@ -246,6 +251,7 @@ class GmailFilter(EmailFilter):
                     self.size_smaller,
                     self.starred,
                     self.to,
+                    self.subject,
                 )
             ).strip(),
         )
