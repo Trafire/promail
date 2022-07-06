@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "promail"
-version = "0.5.2"
+version = "0.5.6"
 authors = ["Antoine Wood <antoinewood@gmail.com>"]
 description = "Promail: The Python Email Automation Framework"
 license = "GNU"
@@ -8,7 +8,7 @@ readme = "README.md"
 homepage = "https://github.com/trafire/promail"
 repository = "https://github.com/trafire/promail"
 keywords = ["promail", "email", "automation"]
-include = ["src/promail/.credentials/gmail_credentials.json"]
+include = []
 documentation = "https://promail.readthedocs.io"
 
 [tool.poetry.dependencies]
