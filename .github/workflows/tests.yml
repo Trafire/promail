@@ -6,18 +6,27 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10']
+        python-version: [ '3.10' ]
     name: Python ${{ matrix.python-version }}
+
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-        architecture: x64
-    - run: pip install nox==2022.1.7
-    - run: pip install poetry==1.1.13
-    - run: nox
-      env:
-        HOTMAIL_TEST_EMAIL: ${{ secrets.HOTMAIL_TEST_EMAIL }}
-        HOTMAIL_TEST_PASSWORD: ${{ secrets.HOTMAIL_TEST_PASSWORD }}
-        GMAIL_TEST_EMAIL: ${{ secrets.GMAIL_TEST_EMAIL }}
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+      - run: pip install nox==2022.1.7
+      - run: pip install poetry==1.1.13
+      - name: create-json
+          id: create-json
+          uses: jsdaniell/create-json@1.1.2
+          with:
+            name: "gmail_credential.json"
+            json: ${{ secrets.GMAIL_CREDENTIALS_JSON }}
+            dir: ".credentials"/"
+      - run: nox
+        env:
+          HOTMAIL_TEST_EMAIL: ${{ secrets.HOTMAIL_TEST_EMAIL }}
+          HOTMAIL_TEST_PASSWORD: ${{ secrets.HOTMAIL_TEST_PASSWORD }}
+          GMAIL_TEST_EMAIL: ${{ secrets.GMAIL_TEST_EMAIL }}
+          GMAIL_CREDENTIALS: ".credentials/gmail_credential.json"
