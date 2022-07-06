@@ -1,5 +1,6 @@
 """Gmail Mail Client."""
 import base64
+import logging
 import os.path
 from typing import List, Optional
 
@@ -18,6 +19,8 @@ from promail.clients.email_manager import (
 from promail.core.embedded_attachments import EmbeddedAttachments
 from promail.core.messages.messages import Message
 from promail.filters.gmail_filter import GmailFilter
+
+logging.basicConfig(level=logging.INFO)
 
 
 class GmailClient(OutBoundManager, InBoundManager):
@@ -64,11 +67,8 @@ class GmailClient(OutBoundManager, InBoundManager):
             "gmail",
             f"{sanitized_account}.json",
         )
-        self.gmail_credentials: str = credentials or os.path.join(
-            os.path.dirname(os.path.realpath(__file__)),
-            "..",
-            ".credentials",
-            "gmail_credentials.json",
+        self.gmail_credentials: str = credentials or os.environ.get(
+            "GMAIL_CREDENTIALS", ""
         )
         self.service = self.login()
         self._clear_token = clear_token
@@ -89,9 +89,18 @@ class GmailClient(OutBoundManager, InBoundManager):
             if creds and creds.expired and creds.refresh_token:
                 creds.refresh(Request())
             else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    self.gmail_credentials, GmailClient.SCOPES
-                )
+                try:
+                    flow = InstalledAppFlow.from_client_secrets_file(
+                        self.gmail_credentials, GmailClient.SCOPES
+                    )
+                except FileNotFoundError as e:
+                    logging.error(e)
+                    logging.error(
+                        "Please include the location of your GMAIL credentials json in the class initiatiation"
+                        " or Set GMAIL_CREDENTIALS env variable to the location of your gmail credentials json."
+                    )
+                    exit(400)
+
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
 
