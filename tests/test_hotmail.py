@@ -1,4 +1,4 @@
-# """Tests for SMTP Client."""
+"""Tests for SMTP Client."""
 # import os
 #
 # from dotenv import load_dotenv  # type: ignore
