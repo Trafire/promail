@@ -12,8 +12,10 @@ import pytest
 from promail.clients.gmail import GmailClient
 from promail.core.embedded_attachments import EmbeddedAttachments
 
+# load env variables for local development
+if os.path.exists(".env"):
+    load_dotenv(".env")
 
-load_dotenv(".env")
 GMAIL_TEST_EMAIL = os.environ.get("GMAIL_TEST_EMAIL", "")
 
 
