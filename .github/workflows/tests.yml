@@ -10,15 +10,16 @@ jobs:
     name: Python ${{ matrix.python-version }}
 
     steps:
+      - run: |
+            mkdir ".credentials"
+            touch ".credentials/gmail_credential.json"
+            echo ${{ secrets.GMAIL_CREDENTIALS_JSON }} >> ".credentials/gmail_credential.json"
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-      - run: |
-          mkdir .credentials
-          touch .credentials/gmail_credential.json
-          echo ${{ secrets.GMAIL_CREDENTIALS_JSON }} >> .credentials/gmail_credential.json
+
       - run: pip install nox==2022.1.7
       - run: pip install poetry==1.1.13
       - run: nox
