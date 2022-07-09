@@ -9,21 +9,16 @@ jobs:
         python-version: [ '3.10' ]
     name: Python ${{ matrix.python-version }}
 
-
     steps:
-      - name: create-json
-        id: create-json
-        uses: jsdaniell/create-json@1.1.2
-        with:
-          name: "gmail_credential.json"
-          json: ${{ secrets.GMAIL_CREDENTIALS_JSON }}
-          dir: ".credentials"/"
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v1
         with:
           python-version: ${{ matrix.python-version }}
           architecture: x64
-
+      - run: |
+          mkdir .credentials
+          touch .credentials/gmail_credential.json
+          echo ${{ secrets.GMAIL_CREDENTIALS_JSON }} >> .credentials/gmail_credential.json
       - run: pip install nox==2022.1.7
       - run: pip install poetry==1.1.13
       - run: nox
