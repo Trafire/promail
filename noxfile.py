@@ -7,7 +7,7 @@ import nox
 from nox import Session
 
 locations = "src", "tests", "noxfile.py", "docs/conf.py"
-nox.options.sessions = "lint", "safety", "mypy", "tests"
+nox.options.sessions = "lint", "mypy", "tests"
 package = "promail"
 
 
