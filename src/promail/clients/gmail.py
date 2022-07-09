@@ -96,8 +96,10 @@ class GmailClient(OutBoundManager, InBoundManager):
                 except FileNotFoundError as e:
                     logging.error(e)
                     logging.error(
-                        "Please include the location of your GMAIL credentials json in the class initiatiation"
-                        " or Set GMAIL_CREDENTIALS env variable to the location of your gmail credentials json."
+                        "Please include the location of your "
+                        "GMAIL credentials json in the class initiatiation"
+                        " or Set GMAIL_CREDENTIALS env variable to the "
+                        "location of your gmail credentials json."
                     )
                     exit(400)
 
