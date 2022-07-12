@@ -24,6 +24,7 @@ class EmailFilter(abc.ABC):
         around: Optional[dict] = None,
         attachment: Optional[bool] = None,
         bcc: Optional[tuple] = None,
+        body: Optional[str] = None,
         category: Optional[str] = None,
         cc: Optional[tuple] = None,
         filename: Optional[tuple] = None,
@@ -65,6 +66,7 @@ class EmailFilter(abc.ABC):
             bcc: Will look for emails that include terms in bcc,
                 expects tuple of strings if more than one term
                 provided will search based on "OR"
+            body: Messages that contain the specified string in the body of the message
             category: filter on category
             cc: filter on cc
             filename: filter on filename
@@ -108,6 +110,7 @@ class EmailFilter(abc.ABC):
         self._attachment = attachment
         self._label = label
         self._folder = folder
+        self._body = body
         self._cc = cc
         self._to = to
         self._read = read
@@ -128,7 +131,7 @@ class EmailFilter(abc.ABC):
 
     def filter_results(self, messages):
         """Removes messages in self.processed."""
-        raise NotImplementedError
+        raise NotImplementedError(__name__ + " not implemented")
 
     @property
     def processed_filename(self):
@@ -167,6 +170,11 @@ class EmailFilter(abc.ABC):
         Raises:
             NotImplementedError: method not implemented.
         """
+        raise NotImplementedError(__name__ + " not implemented")
+
+    @property
+    def body(self):
+        """Messages that contain the specified string in the body of the message."""
         raise NotImplementedError(__name__ + " not implemented")
 
     @property

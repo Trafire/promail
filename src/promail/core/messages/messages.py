@@ -16,9 +16,7 @@ class Message:
         Args:
             msg: email message data containing id
         """
-        self.msg = email.message_from_bytes(
-            base64.urlsafe_b64decode(msg["raw"]), _class=EmailMessage, policy=default
-        )
+        self.msg = email.message_from_bytes(msg["raw"])
         self._attachments = None
 
     @property
@@ -99,3 +97,19 @@ class Message:
     def __str__(self) -> str:
         """String representation."""
         return self.subject or ""
+
+
+class GmailMessage(Message):
+    """Gmil Message object."""
+
+    def __init__(self, msg: dict) -> None:
+        """Initalises Message object.
+
+        Args:
+            msg: email message data containing id
+        """
+        super(GmailMessage, self).__init__(msg)
+        # overwrite message with google specific settings
+        self.msg = email.message_from_bytes(
+            base64.urlsafe_b64decode(msg["raw"]), _class=EmailMessage, policy=default
+        )
