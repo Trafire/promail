@@ -142,7 +142,7 @@ class GmailFilter(EmailFilter):
     @property
     def sent_before(self):
         """Search query based on sent_before."""
-        return self._get_date("before", self._sent_after)
+        return self._get_date("before", self._sent_before)
 
     @property
     def starred(self):

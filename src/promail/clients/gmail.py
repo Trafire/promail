@@ -17,7 +17,7 @@ from promail.clients.email_manager import (
     OutBoundManager,
 )
 from promail.core.embedded_attachments import EmbeddedAttachments
-from promail.core.messages.messages import Message
+from promail.core.messages.messages import GmailMessage
 from promail.filters.gmail_filter import GmailFilter
 
 logging.basicConfig(level=logging.INFO)
@@ -156,6 +156,7 @@ class GmailClient(OutBoundManager, InBoundManager):
     # inbound
 
     def _process_filter_messages(self, email_filter, page_size=100, page_token=None):
+        # get emails that match search criteria
         results = (
             self.service.users()
             .messages()
@@ -168,6 +169,7 @@ class GmailClient(OutBoundManager, InBoundManager):
             .execute()
         )
 
+        # remove emails that have already been processed
         messages = email_filter.filter_results(results.get("messages", []))
 
         for message in messages:
@@ -177,11 +179,13 @@ class GmailClient(OutBoundManager, InBoundManager):
                 .get(userId="me", id=message["id"], format="raw", metadataHeaders=None)
                 .execute()
             )
-            email_message = Message(current_message)
+            email_message = GmailMessage(current_message)
+            # pass email to each functioned registered with filter
             for func in self._registered_functions[email_filter]:
                 func(email_message)
                 email_filter.add_processed(message["id"])
 
+        # process next page in paginated results.
         next_page = results.get("nextPageToken")
         if next_page:
             self._process_filter_messages(

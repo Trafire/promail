@@ -106,7 +106,7 @@ class OutBoundManager(abc.ABC, EmailManager):
         return msg
 
 
-class InBoundManager(abc.ABC):
+class InBoundManager(abc.ABC, EmailManager):
     """InBound Mail class template."""
 
     def __init__(self, account):
