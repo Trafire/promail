@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "promail"
-version = "0.6.0"
+version = "0.7.0"
 authors = ["Antoine Wood <antoinewood@gmail.com>"]
 description = "Promail: The Python Email Automation Framework"
 license = "GNU"
