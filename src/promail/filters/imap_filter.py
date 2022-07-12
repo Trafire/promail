@@ -19,10 +19,22 @@ class ImapFilter(EmailFilter):
             return None
         return [term, data]
 
+    @staticmethod
+    def _join_tuple(term: str, data: Optional[tuple]):
+        if data is None or len(data) == 0:
+            q = None
+        elif len(data) == 1:
+            q = [term, data[0]]
+        else:
+            q = ["OR"] * len(data)
+            for d in data:
+                q.extend([term, d])
+        return q
+
     @property
     def bcc(self) -> Optional[list]:
         """Email BCC Query."""
-        return self._get_string("BCC", self._bcc)
+        return self._join_tuple("BCC", self._bcc)
 
     @property
     def body(self) -> Optional[list]:
@@ -32,10 +44,14 @@ class ImapFilter(EmailFilter):
     @property
     def cc(self) -> Optional[list]:
         """CC filter.
+
         Messages that contain the specified string
         in the envelope structure's CC field.
+
+        Returns:
+            list: ["CC", "emails]"
         """
-        return self._get_string("CC", self._cc)
+        return self._join_tuple("CC", self._cc)
 
     @property
     def sender(self):
@@ -60,7 +76,7 @@ class ImapFilter(EmailFilter):
     @property
     def to(self) -> Optional[list]:
         """Email Subject Query."""
-        return self._get_string("TO", self._to)
+        return self._join_tuple("TO", self._to)
 
     def get_filter_list(self) -> list:
         """Combine search parameters into query."""

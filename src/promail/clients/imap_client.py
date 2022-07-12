@@ -2,10 +2,11 @@
 import imaplib
 import logging
 
-from imapclient import IMAPClient
+from imapclient import IMAPClient  # type: ignore
 
 from promail.clients.email_manager import InBoundManager
 from promail.core.messages.messages import Message
+from promail.filters.email_filter import EmailFilter
 from promail.filters.imap_filter import ImapFilter
 
 
@@ -20,7 +21,7 @@ class ImapClient(InBoundManager):
         self._filter_class = ImapFilter
 
     def _process_filter_messages(
-        self, email_filter: ImapFilter, page_size=100, page_token=None
+        self, email_filter: EmailFilter, page_size=100, page_token=None
     ):
         # get emails that match search criteria
         with IMAPClient(host=self._host) as client:

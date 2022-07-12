@@ -172,6 +172,16 @@ class EmailFilter(abc.ABC):
         """
         raise NotImplementedError(__name__ + " not implemented")
 
+    def get_filter_list(self) -> list:
+        """Creates list to query email based on parameters.
+
+        Returns: Query String.
+
+        Raises:
+            NotImplementedError: method not implemented.
+        """
+        raise NotImplementedError(__name__ + " not implemented")
+
     @property
     def body(self):
         """Messages that contain the specified string in the body of the message."""
