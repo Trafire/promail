@@ -23,6 +23,7 @@ tabulate = "^0.8.9"
 requests = "^2.27.1"
 google-api-core = "^2.8.0"
 python-dotenv = "^0.1.0"
+IMAPClient = "^2.3.1"
 
 [tool.poetry.dev-dependencies]
 flake8-annotations = "^2.9.0"

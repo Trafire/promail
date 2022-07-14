@@ -21,9 +21,9 @@ class EmailManager:
 class OutBoundManager(abc.ABC, EmailManager):
     """Outbound Mail class template."""
 
-    def __init__(self, account):
+    def __init__(self, account, *args, **kwargs):
         """Initializes OutBoundManager."""
-        super(OutBoundManager, self).__init__(account)
+        super(OutBoundManager, self).__init__(account,*args, **kwargs)
 
     def send_email(
         self,

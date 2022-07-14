@@ -13,10 +13,10 @@ from promail.filters.imap_filter import ImapFilter
 class ImapClient(InBoundManager):
     """Imap Client."""
 
-    def __init__(self, account, password, host):
+    def __init__(self, account, password, host, **kwargs):
         """Initiate IMAP client."""
         super(ImapClient, self).__init__(account)
-        self._host = host
+        self._imap_host = host
         self._password = password
         self._filter_class = ImapFilter
 
@@ -24,7 +24,7 @@ class ImapClient(InBoundManager):
         self, email_filter: EmailFilter, page_size=100, page_token=None
     ):
         # get emails that match search criteria
-        with IMAPClient(host=self._host) as client:
+        with IMAPClient(host=self._imap_host) as client:
             client.login(self._account, self._password)
             client.select_folder("INBOX")
             results = client.search(email_filter.get_filter_list())

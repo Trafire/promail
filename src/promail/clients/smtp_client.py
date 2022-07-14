@@ -18,9 +18,9 @@ class SmtpClient(OutBoundManager):
             host (str): url of host.
             port (int): Port to connect on.
         """
-        super(SmtpClient, self).__init__(account)
+        super(SmtpClient, self).__init__(account=account, password=password,host=host,port=port)
         self._password = password
-        self._host = host
+        self._smtp_host = host
         self._port = port
 
     def login(self, server):
@@ -62,7 +62,7 @@ class SmtpClient(OutBoundManager):
             embedded_attachments,
             attachements,
         )
-        with smtplib.SMTP(self._host, self._port) as server:
+        with smtplib.SMTP(self._smtp_host, self._port) as server:
             self.login(server)
             server.sendmail(self._account, recipients, msg.as_string())
             server.close()
