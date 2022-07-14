@@ -1,7 +1,7 @@
 """Email Clients."""
 from .gmail import GmailClient
-from .microsoft import HotmailClient
 from .imap_client import ImapClient
+from .microsoft import HotmailClient
 from .smtp_client import SmtpClient
 
 
