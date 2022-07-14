@@ -2,6 +2,7 @@
 from .gmail import GmailClient
 from .microsoft import HotmailClient
 from .smtp_client import SmtpClient
+from .imap_client import ImapClient
 
 try:
     from importlib.metadata import version, PackageNotFoundError  # type: ignore
@@ -13,4 +14,11 @@ try:
 except PackageNotFoundError:  # pragma: no cover
     __version__ = "unknown"
 
-__all__ = ["email_manager", "gmail", "GmailClient", "HotmailClient", "SmtpClient"]
+__all__ = [
+    "email_manager",
+    "gmail",
+    "GmailClient",
+    "HotmailClient",
+    "ImapClient",
+    "SmtpClient",
+]
