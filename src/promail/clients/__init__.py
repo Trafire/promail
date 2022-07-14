@@ -1,8 +1,9 @@
 """Email Clients."""
 from .gmail import GmailClient
 from .microsoft import HotmailClient
-from .smtp_client import SmtpClient
 from .imap_client import ImapClient
+from .smtp_client import SmtpClient
+
 
 try:
     from importlib.metadata import version, PackageNotFoundError  # type: ignore

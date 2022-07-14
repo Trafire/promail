@@ -18,7 +18,9 @@ class SmtpClient(OutBoundManager):
             host (str): url of host.
             port (int): Port to connect on.
         """
-        super(SmtpClient, self).__init__(account=account, password=password,host=host,port=port)
+        super(SmtpClient, self).__init__(
+            account=account, password=password, host=host, port=port
+        )
         self._password = password
         self._smtp_host = host
         self._port = port

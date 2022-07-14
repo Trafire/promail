@@ -23,7 +23,7 @@ class OutBoundManager(abc.ABC, EmailManager):
 
     def __init__(self, account, *args, **kwargs):
         """Initializes OutBoundManager."""
-        super(OutBoundManager, self).__init__(account,*args, **kwargs)
+        super(OutBoundManager, self).__init__(account, *args, **kwargs)
 
     def send_email(
         self,
