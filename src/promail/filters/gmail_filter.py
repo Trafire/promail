@@ -48,17 +48,6 @@ class GmailFilter(EmailFilter):
 
     @staticmethod
     def _join_tuple(term: str, data: Optional[tuple], seperator: str) -> str:
-        """
-                It takes a term, a tuple of data, and a seperator, and returns a string that can be used in a query
-
-                :param term: The term to search for
-                :type term: str
-                :param data: The data to be searched
-                :type data: Optional[tuple]
-                :param seperator: This is the string that will be used to join the data
-                :type seperator: str
-                :return: A string
-                """
         if data is None:
             return ""
         if seperator == "OR":
@@ -270,6 +259,7 @@ class GmailFilter(EmailFilter):
     def filter_results(self, messages):
         """Removes messages in self.processed."""
         return filter(lambda msg: msg["id"] not in self.processed, messages)
+
 
 # a = GmailFilter(
 #     load_processed=True,

@@ -1,21 +1,26 @@
+"""Test Gmail Filters Class."""
 from promail.filters.gmail_filter import GmailFilter
 
 
 class TestGmailFilter:
+    """Test Gmail Filter."""
 
     def test__validate(self):
+        """Test Validate method."""
         client = GmailFilter("Test Filter")
         assert client._validate() is None
 
     def test__join_tuple(self):
+        """Test Join tuple method."""
         client = GmailFilter("Test Filter")
         t = ("One", "Two")
-        assert client._join_tuple(
-            term="test", data=t, seperator=" "
-        ) == "test:(One Two)"
+        assert (
+            client._join_tuple(term="test", data=t, seperator=" ") == "test:(One Two)"
+        )
 
     def test_sender(self):
-        client = GmailFilter("Test Filter", sender=("test@gmail.ca","test2@gmail.ca"))
+        """Test sender method."""
+        client = GmailFilter("Test Filter", sender=("test@gmail.ca", "test2@gmail.ca"))
         assert client.sender == "from:test@gmail.ca OR from:test2@gmail.ca"
 
     # def test__get_boalean(self):
