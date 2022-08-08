@@ -23,10 +23,11 @@ Promailer
 Promail's :py:class:`promail.clients.GmailClient`  uses Oauth rather than a password to access your email.
 You'll be taken to googles Oauth login page which will allow you to log in.
 
-.. code-block:: python
+.. code-block::
+
     >>> from promail.clients import GmailClient
     >>> client = GmailClient("my_email@gmail.com")
-    >>> my_email.send_email(
+    >>> client.send_email(
             recipients="your_email@gmail.com",
             cc="someelse@gmail.com",
             subject="My First Promail Email",

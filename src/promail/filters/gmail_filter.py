@@ -47,16 +47,27 @@ class GmailFilter(EmailFilter):
                 )
 
     @staticmethod
-    def _join_tuple(term: str, data: Optional[tuple], seperator: str):
+    def _join_tuple(term: str, data: Optional[tuple], seperator: str) -> str:
+        """
+                It takes a term, a tuple of data, and a seperator, and returns a string that can be used in a query
+
+                :param term: The term to search for
+                :type term: str
+                :param data: The data to be searched
+                :type data: Optional[tuple]
+                :param seperator: This is the string that will be used to join the data
+                :type seperator: str
+                :return: A string
+                """
         if data is None:
             return ""
         if seperator == "OR":
             return " OR ".join([f"{term}:{d}" for d in data])
-        elif seperator == " ":
+        else:
             return f"{term}:(" + seperator.join([f"{d}" for d in data]) + ")"
 
     @staticmethod
-    def _get_boalean(term: str, value: tuple, data: Optional[bool]):
+    def _get_boolean(term: str, value: tuple, data: Optional[bool]):
         if data is None:
             return ""
 
@@ -93,7 +104,7 @@ class GmailFilter(EmailFilter):
     @property
     def read(self):
         """Search query based on read."""
-        return self._get_boalean("read", ["read", "unread"], self._read)
+        return self._get_boolean("read", ["read", "unread"], self._read)
 
     @property
     def newer_than(self):
@@ -259,7 +270,6 @@ class GmailFilter(EmailFilter):
     def filter_results(self, messages):
         """Removes messages in self.processed."""
         return filter(lambda msg: msg["id"] not in self.processed, messages)
-
 
 # a = GmailFilter(
 #     load_processed=True,
