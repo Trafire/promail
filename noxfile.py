@@ -21,7 +21,6 @@ class CustomNamedTemporaryFile:
     while the named temporary file is still open,
     > varies across platforms (it can be so used on Unix;
      it cannot on Windows NT or later).
-
     """
 
     def __init__(self, mode: str = "wb", delete: bool = True) -> None:
@@ -144,7 +143,7 @@ def safety(session: Session) -> None:
 def mypy(session: Session) -> None:
     """Type-check using mypy."""
     args = session.posargs or locations
-    install_with_constraints(session, "mypy", "--verbose")
+    install_with_constraints(session, "mypy", "pydantic", "boto3-stubs", "--verbose")
     session.run("mypy", *args)
 
 
