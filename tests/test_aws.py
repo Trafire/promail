@@ -1,4 +1,4 @@
-# """AWSClient Test suite."""
+"""AWSClient Test suite."""
 # import os
 #
 # from promail.clients import AWSClient
