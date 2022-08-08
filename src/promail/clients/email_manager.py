@@ -13,7 +13,7 @@ from promail.filters.email_filter import EmailFilter
 class EmailManager:
     """Super class inherited by OutBoundInbound manager."""
 
-    def __init__(self, account):
+    def __init__(self, account: str):
         """Initializes email manager."""
         self._account = account
 
@@ -21,7 +21,7 @@ class EmailManager:
 class OutBoundManager(abc.ABC, EmailManager):
     """Outbound Mail class template."""
 
-    def __init__(self, account, *args, **kwargs):
+    def __init__(self, account: str, *args, **kwargs):
         """Initializes OutBoundManager."""
         super(OutBoundManager, self).__init__(account, *args, **kwargs)
 
@@ -34,7 +34,7 @@ class OutBoundManager(abc.ABC, EmailManager):
         htmltext: str = "",
         plaintext: str = "",
         embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
-        attachements: Optional[list] = None,
+        attachments: Optional[list] = None,
     ) -> None:
         """Send an email."""
         pass
@@ -78,11 +78,11 @@ class OutBoundManager(abc.ABC, EmailManager):
         htmltext: str = "",
         plaintext: str = "",
         embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
-        attachements: Optional[list] = None,
+        attachments: Optional[list] = None,
     ) -> EmailMessage:
         """Create Email Message."""
-        if attachements is None:
-            attachements = []
+        if attachments is None:
+            attachments = []
         if embedded_attachments is None:
             embedded_attachments = []
         msg = EmailMessage()
@@ -102,7 +102,7 @@ class OutBoundManager(abc.ABC, EmailManager):
                 cid=embedded_attachment.cid,
             )
 
-        self.add_attachments(msg, attachements)
+        self.add_attachments(msg, attachments)
         return msg
 
 

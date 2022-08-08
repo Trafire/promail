@@ -4,7 +4,7 @@ import email
 from email.message import EmailMessage
 from email.policy import default
 
-from promail.core.attachements.attachments import Attachments
+from promail.core.attachments.attachments import Attachments
 
 
 class Message:

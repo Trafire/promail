@@ -8,10 +8,10 @@ from promail.filters.email_filter import EmailFilter
 class GmailFilter(EmailFilter):
     """Email Filter Generates a query string used to query the email backend.
 
-    Email filter is used by the email client to store
-    which emails have been run with which filters.
-    The Filter uses `name` and `version` to uniquely identify itself.
-    Queries based on: https://seosly.com/gmail-search-operators/
+    Email filter is used by the email client to store which emails have
+    been run with which filters. The Filter uses `name` and `version` to
+    uniquely identify itself. Queries based on:
+    https://seosly.com/gmail-search-operators/
     """
 
     TIME_FRAMES = {
@@ -47,16 +47,16 @@ class GmailFilter(EmailFilter):
                 )
 
     @staticmethod
-    def _join_tuple(term: str, data: Optional[tuple], seperator: str):
+    def _join_tuple(term: str, data: Optional[tuple], seperator: str) -> str:
         if data is None:
             return ""
         if seperator == "OR":
             return " OR ".join([f"{term}:{d}" for d in data])
-        elif seperator == " ":
+        else:
             return f"{term}:(" + seperator.join([f"{d}" for d in data]) + ")"
 
     @staticmethod
-    def _get_boalean(term: str, value: tuple, data: Optional[bool]):
+    def _get_boolean(term: str, value: tuple, data: Optional[bool]):
         if data is None:
             return ""
 
@@ -93,7 +93,7 @@ class GmailFilter(EmailFilter):
     @property
     def read(self):
         """Search query based on read."""
-        return self._get_boalean("read", ["read", "unread"], self._read)
+        return self._get_boolean("read", ["read", "unread"], self._read)
 
     @property
     def newer_than(self):

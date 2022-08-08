@@ -6,8 +6,8 @@ from email.utils import make_msgid
 class EmbeddedAttachments:
     """EmbeddedAttachments in Email.
 
-    EmbeddedAttachments are used to include your local files
-    in the body of an email.
+    EmbeddedAttachments are used to include your local files in the body
+    of an email.
     """
 
     def __init__(self, filepath):

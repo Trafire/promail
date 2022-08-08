@@ -40,7 +40,7 @@ class SmtpClient(OutBoundManager):
         htmltext: str = "",
         plaintext: str = "",
         embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
-        attachements: Optional[list] = None,
+        attachments: Optional[list] = None,
     ) -> None:
         """Send Email.
 
@@ -52,7 +52,7 @@ class SmtpClient(OutBoundManager):
             htmltext: An HTML string of text
             plaintext: A plain text alternative text
             embedded_attachments: List of EmbeddedAttachments included in email.
-            attachements: list of filenames or filelike objects
+            attachments: list of filenames or filelike objects
         """
         msg = self.create_message(
             recipients,
@@ -62,7 +62,7 @@ class SmtpClient(OutBoundManager):
             htmltext,
             plaintext,
             embedded_attachments,
-            attachements,
+            attachments,
         )
         with smtplib.SMTP(self._smtp_host, self._port) as server:
             self.login(server)

@@ -55,8 +55,6 @@ class GmailClient(OutBoundManager, InBoundManager):
                 production uses you create your own key, so that
                 we don't exhaust current resources.
                 The Gmail API is free so there are no cost implications.
-
-
         """
         super(GmailClient, self).__init__(account)
         self._filter_class = GmailFilter
@@ -125,7 +123,7 @@ class GmailClient(OutBoundManager, InBoundManager):
         htmltext: str = "",
         plaintext: str = "",
         embedded_attachments: Optional[List[EmbeddedAttachments]] = None,
-        attachements: Optional[list] = None,
+        attachments: Optional[list] = None,
     ) -> None:
         """Send email."""
         msg = self.create_message(
@@ -136,7 +134,7 @@ class GmailClient(OutBoundManager, InBoundManager):
             htmltext,
             plaintext,
             embedded_attachments,
-            attachements,
+            attachments,
         )
 
         raw_data = base64.urlsafe_b64encode(msg.as_bytes())
