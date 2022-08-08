@@ -40,4 +40,5 @@
 #
 #     def test_send_email(self):
 #         """Test Sending Email."""
-#         self.client.send_email(recipients=self.email, subject="Promail Automated Test")
+#         self.client.send_email(
+#         recipients=self.email, subject="Promail Automated Test")
