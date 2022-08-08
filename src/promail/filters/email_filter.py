@@ -11,9 +11,10 @@ from typing import Optional
 class EmailFilter(abc.ABC):
     """Email Filter Generates a query string used to query the email backend.
 
-    Email filter is used by the email client to store
-    which emails have been run with which filters.
-    The Filter uses `name` and `version` to uniquely identify itself.
+    Email filter is used by the email client to store which emails have
+    been run with which filters. The Filter uses `name` and `version` to
+    uniquely identify itself.
+
     Queries based on: https://seosly.com/gmail-search-operators/
     """
 
@@ -183,7 +184,7 @@ class EmailFilter(abc.ABC):
         raise NotImplementedError(__name__ + " not implemented")
 
     @property
-    def body(self):
+    def body(self) -> object:
         """Messages that contain the specified string in the body of the message."""
         raise NotImplementedError(__name__ + " not implemented")
 
