@@ -11,7 +11,12 @@ class TestAWSClient:
     region_name = os.environ.get("aws_region_name")
     aws_access_key_id = os.environ.get("aws_access_key_id ")
     aws_secret_access_key = os.environ.get("aws_secret_access_key")
-    client = AWSClient(email, region_name=region_name)
+    client = AWSClient(
+        email,
+        region_name=region_name,
+        aws_access_key_id=aws_access_key_id,
+        aws_secret_access_key=aws_secret_access_key,
+    )
 
     def test__get_client(self):
         """Test Client method."""
