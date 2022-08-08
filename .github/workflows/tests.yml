@@ -28,3 +28,5 @@ jobs:
           HOTMAIL_TEST_PASSWORD: ${{ secrets.HOTMAIL_TEST_PASSWORD }}
           GMAIL_TEST_EMAIL: ${{ secrets.GMAIL_TEST_EMAIL }}
           GMAIL_CREDENTIALS: ".credentials/gmail_credential.json"
+          aws_access_key_id: ${{ secrets.aws_access_key_id }}
+          aws_secret_access_key: ${{ secrets.aws_secret_access_key }}
